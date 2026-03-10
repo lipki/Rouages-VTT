@@ -1,0 +1,41 @@
+.dice-box {
+    padding: 1rem;
+
+    .dice {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3.9rem;
+        aspect-ratio: 1;
+        background-image: url(../img/d10.svg);
+        background-size: 100%;
+        background-repeat: no-repeat;
+        box-sizing: border-box;
+        padding-top: 0.8rem;
+        container-type: inline-size;
+        font-weight: bold;
+
+        span {
+            font-size: 32cqw;
+            font-family: var(--font-hand);
+        }
+    }
+
+    .dice6 {
+        background-image: url(../img/d6.svg);
+    }
+
+    .dice10 {
+        &.atout {
+            background-image: url(../img/d10_atout.svg);
+        }
+
+        &.penalite {
+            background-image: url(../img/d10_penalite.svg);
+        }
+
+        &.competence {
+            background-image: url(../img/d10_competence.svg);
+        }
+    }
+}

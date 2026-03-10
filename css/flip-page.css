@@ -1,0 +1,68 @@
+.sheet-container {
+    perspective: 2000px;
+    min-width: 50rem;
+
+    .sheet {
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.8s ease;
+        z-index: 1;
+
+        &.flipped {
+            transform: rotateY(180deg);
+            z-index: 0;
+
+            &~.historical {
+                top: 5rem;
+                transform: rotate(-1deg);
+                left: 34rem;
+                height: 62rem;
+            }
+        }
+    }
+
+    .sheet-front,
+    .sheet-back {
+        position: absolute;
+        width: 100%;
+        backface-visibility: hidden;
+        min-height: 71rem;
+
+        background-image: var(--parchment);
+        background-color: var(--parchment-color);
+        background-size: 100% 100%;
+        box-shadow:
+            inset 0 0 2rem 2rem #2b20022e,
+            0 0 1rem 0 #00000073;
+
+        overflow: hidden;
+        padding: 0 1rem;
+        box-sizing: border-box;
+    }
+
+    .sheet-back {
+        transform: rotateY(180deg);
+
+        header {
+            transform: rotateY(180deg);
+        }
+
+        textarea {
+            width: 31rem;
+            height: 58rem;
+        }
+    }
+
+    .page-corner {
+        position: absolute;
+        width: 4rem;
+        height: 4rem;
+        left: 0;
+        top: 0;
+        cursor: pointer;
+
+        background: linear-gradient(-45deg,
+                transparent 50%,
+                #00000020 50%);
+    }
+}

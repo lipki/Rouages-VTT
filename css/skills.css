@@ -1,0 +1,97 @@
+#skills-container {
+    .skills-list {
+        display: flex;
+        flex-direction: column;
+
+        button {
+            position: relative;
+            display: none;
+
+            &.active:not(.show) {
+                display: inline;
+                cursor: pointer;
+                font-family: var(--font-title);
+                position: relative;
+                border-image: url(../img/competence.svg) 0 30 30 101 fill / 0px 30px 30px 101px;
+                background: transparent;
+                font-size: 1rem;
+                padding: 0.3rem;
+                width: 100%;
+            }
+
+            &::before {
+                content: attr(data-icon);
+                position: absolute;
+                left: 0.3rem;
+                top: 0;
+            }
+        }
+
+    }
+
+    .technique {
+        h4 {
+            display: none;
+            margin: 1rem 0 0.5rem;
+            text-align: center;
+            font-family: var(--font-title);
+            background-color: rgb(0, 0, 0);
+            color: white;
+
+            &.show {
+                display: block;
+                grid-column: 1/4;
+            }
+        }
+
+        &:has(button.active) h4 {
+            display: block;
+            grid-column: 1/4;
+        }
+    }
+
+    &:not(.show) .skills-list {
+        button.selected {
+            display: inline;
+            color: black;
+            border-color: #333;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: 63%;
+            background-image: url(../img/selected.svg);
+        }
+    }
+
+    &.show {
+        .skills-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.1rem;
+        }
+
+        button {
+            display: inline;
+            background: transparent;
+            border: 1px solid gray;
+            border-radius: 0.2rem;
+            padding: 0.2rem 0.2rem 0.2rem 1.2rem;
+            font-family: var(--font-title);
+        }
+
+        button.active {
+            display: inline;
+            border: 1px solid #000;
+            background-color: #00000042;
+            border-radius: 0.2rem;
+        }
+    }
+}
+
+#skills-update {
+    position: absolute;
+    right: 1rem;
+    top: 1.3rem;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}

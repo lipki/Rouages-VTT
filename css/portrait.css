@@ -1,0 +1,62 @@
+#zone-portrait {
+    width: 12rem;
+    aspect-ratio: 0.95;
+    position: absolute;
+    right: 1rem;
+    top: 0.5rem;
+    cursor: copy;
+
+
+    span {
+        display: none;
+    }
+
+    #avatarimage {
+        mask-image:
+            radial-gradient(ellipse 36.6% 43.2% at 50.2% 47%,
+                white 99%,
+                transparent 100%);
+        mask-repeat: no-repeat;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        position: absolute;
+        mask-position: center;
+        mask-size: cover;
+    }
+
+    .overlay {
+        background-image:
+            url(../img/portrait.svg),
+            radial-gradient(ellipse 36.6% 43.2% at 50.2% 47%,
+                #fff0 95%,
+                #fff0 95.1%,
+                #ffffffa3 107.5%,
+                transparent 108%);
+        aspect-ratio: 0.95;
+        position: absolute;
+        width: 11rem;
+        background-size: 100%;
+        margin: 0.5rem;
+    }
+
+    &:hover span {
+        display: block;
+        position: absolute;
+        bottom: -1rem;
+        width: 100%;
+        text-align: center;
+    }
+
+    &.dragover .overlay {
+        background-image:
+            url(../img/portrait.svg),
+            radial-gradient(ellipse 36.6% 43.2% at 50.2% 47%,
+                #fff0 80%,
+                #fff0 80.1%,
+                #fff 107.5%,
+                transparent 108%);
+    }
+
+}

@@ -1,0 +1,10 @@
+body {
+    padding: 0;
+    margin: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.notebook-container+.notebook-container {
+    height: 18rem;
+}

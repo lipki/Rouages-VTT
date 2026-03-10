@@ -1,0 +1,35 @@
+#zone-identity {
+    width: 37rem;
+    height: 3rem;
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 0 1rem;
+    margin: 1rem 0 2rem;
+    box-sizing: border-box;
+    align-items: flex-end;
+
+    .field {
+        display: flex;
+
+        label {
+            font-family: var(--font-title);
+            font-size: 1rem;
+            color: white;
+            display: flex;
+            align-items: flex-end;
+            background: black;
+            padding: 0 0.5rem;
+        }
+
+        input {
+            display: block;
+            width: 100%;
+            border: 0;
+            border-bottom: 2px dashed black;
+            background-color: transparent;
+            font-family: var(--font-hand);
+            font-size: 1.3rem;
+            padding: 0 0 0 1rem;
+        }
+    }
+}

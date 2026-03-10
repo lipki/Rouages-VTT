@@ -9,20 +9,20 @@ corner.addEventListener("click", () => {
 
 class App {
 
-    constructor(){
+    constructor() {
         const bus = new EventBus();
 
         this.dicePool = new DicePool(bus);
         this.skillManager = new SkillManager(bus);
-        this.statsManager = new StatsManager(".stats-list", bus);
+        this.statsManager = new StatsManager("#stats-list", bus);
 
         new PortraitManager();
-        new StorageInputManager(".identity input");
+        new StorageInputManager("#zone-identity input");
         new StorageInputManager("textarea");
-        new StorageInputManager(".icons-grid input");
+        new StorageInputManager("#stats-grid input");
 
-        new DrawerManager("#zone_capa");
-        new DrawerManager("#zone_contacts");
+        new DrawerManager("#zone-capa");
+        new DrawerManager("#zone-contacts");
     }
 
 }
@@ -114,9 +114,7 @@ class DicePool {
 
         const penaltyDice = Math.max(0, -this.atout - this.skills);
         const bonusDice = Math.max(0, this.atout);
-        const competenceDice = this.skills + this.atout;
-
-        console.log(penaltyDice, bonusDice, this.skills);
+        const competenceDice = this.atout < 0 ? this.skills + this.atout : this.skills;
 
         Array.from({length: competenceDice}).forEach(() =>
             this.add({className:"dice10", maxValue:10, color:"competence"})
@@ -290,8 +288,8 @@ class SkillManager {
 
     constructor( bus ) {
         this.buttons = document.querySelectorAll(".skills-list button");
-        this.updateBtn = document.querySelector("#skills-update");
-        this.container = document.querySelector(".skills-container");
+        this.updateBtn = document.getElementById("skills-update");
+        this.container = document.getElementById("skills-container");
         this.title = document.querySelector(".technique h4");
         this.bus = bus;
 
@@ -349,7 +347,7 @@ class SkillManager {
 class PortraitManager {
 
     constructor() {
-        this.portrait = document.getElementById("portrait");
+        this.portrait = document.getElementById("zone-portrait");
         this.avatar = document.getElementById("avatarimage");
         this.MAX_SIZE = 1 * 1024 * 1024; // 1MB
 

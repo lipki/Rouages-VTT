@@ -5,8 +5,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fiche de Personnage - Rouages</title>
-  <link rel="stylesheet" type="text/css" href="rouages.css">
-  <script async="" src="rouages.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/base.css">
+  <link rel="stylesheet" type="text/css" href="css/flip-page.css">
+  <link rel="stylesheet" type="text/css" href="css/portrait.css">
+  <link rel="stylesheet" type="text/css" href="css/identity.css">
+  <link rel="stylesheet" type="text/css" href="css/stats.css">
+  <link rel="stylesheet" type="text/css" href="css/skills.css">
+  <link rel="stylesheet" type="text/css" href="css/equipment.css">
+  <link rel="stylesheet" type="text/css" href="css/historical.css">
+  <link rel="stylesheet" type="text/css" href="css/dice.css">
+  <link rel="stylesheet" type="text/css" href="css/print.css" media="print">
+  <script async="" src="js/app.js"></script>
 </head>
 
 <body>
@@ -21,13 +30,13 @@
           <h1>Rouages</h1>
         </header>
 
-        <div id='portrait'>
+        <div id='zone-portrait'>
           <img id="avatarimage" name='attr_character_avatar' alt="">
           <div class='overlay' aria-hidden="true"></div>
           <span>Dépose ton avatar</span>
         </div>
 
-        <div class="identity">
+        <div id="zone-identity">
           <div class="field">
             <label for="name"><span>NOM</span></label>
             <input type="text" name="attr_name" id="attr_name" required />
@@ -46,8 +55,8 @@
           </div>
         </div>
 
-        <div class="main-content">
-          <ul class="stats-list">
+        <div id="zone-stats">
+          <ul id="stats-list">
             <li class="label">
               <span>MUSCULATURE</span>
               <input class="gear" type="text" maxlength="2" name="carac_mus" id="carac_mus" data-stat="mus" required />
@@ -74,7 +83,7 @@
             </li>
           </ul>
 
-          <div class="icons-grid">
+          <div id="stats-grid">
             <div class="icon-box vigueur">
               <input type="text" maxlength="2" name="carac_vigu" id="carac_vigu" data-stat="vigu" required />
               <span>VIGUEUR</span>
@@ -113,13 +122,13 @@
         </div>
 
         <div class="notebook-container">
-          <div id="zone_capa">
+          <div id="zone-capa">
             <h3><span>CAPACITÉS</span><button class="add-drawer">➕</button></h3>
             <div class="drawers-container"></div>
           </div>
-          <div>
-            <h3><span>COMPÉTENCES</span></h3>
-            <div class="skills-container">
+          <div id="zone-comp">
+            <h3><span>COMPÉTENCES</span><button id="skills-update" type="button">🖋</button></h3>
+            <div id="skills-container">
               <div class="skills-list">
                 <button data-icon="🛠" id="comp_bricolage">Bricolage</button>
                 <button data-icon="🗡" id="comp_brigandage">Brigandage</button>
@@ -146,16 +155,15 @@
                 <button data-icon="☢" id="comp_explosifs">Explosifs</button>
               </div>
             </div>
-            <button id="skills-update" type="button">🖋</button>
           </div>
         </div>
 
         <div class="notebook-container">
-          <div>
+          <div id="zone-equipment">
             <h3><span>EQUIPEMENT</span></h3>
             <textarea class="notebook" name="attr_equi" id="attr_equi"></textarea>
           </div>
-          <div id="zone_contacts">
+          <div id="zone-contacts">
             <h3><span>CONTACTS</span><button class="add-drawer">➕</button></h3>
             <div class="drawers-container"></div>
           </div>

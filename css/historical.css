@@ -1,0 +1,50 @@
+.historical {
+    background: #d4d4d4;
+    width: 13rem;
+    height: 30rem;
+    position: absolute;
+    transform: rotate(-11deg);
+    top: 20rem;
+    left: calc(50% - 25rem);
+    box-shadow:
+        0.5rem 0.5rem 0.5rem 0rem #00000040,
+        inset 0 0 3rem 0 #4128006b;
+    background-color: #f2f2f2;
+    background-image:
+        var(--parchment),
+        repeating-linear-gradient(transparent,
+            transparent calc(var(--interline) - 1px),
+            #dfdfdf calc(var(--interline) + 0.13rem - 2px),
+            #dfdfdf calc(var(--interline) + 0.13rem));
+    background-size: 400%;
+    font-family: var(--font-hand);
+    padding: 0.8rem 1rem;
+    --interline: 1rem;
+    font-size: var(--interline);
+    cursor: pointer;
+    overflow: hidden;
+    transition:
+        transform 0.35s ease,
+        box-shadow 0.35s ease;
+
+    h2 {
+        margin: 0 0 -0.2rem;
+    }
+
+    ul {
+        margin: 0;
+        padding: 0;
+    }
+
+    .title {
+        margin-top: 1rem;
+    }
+
+    &:hover {
+        transform: rotate(-5deg) scale(1.05);
+        box-shadow:
+            1rem 1rem 1.5rem #00000060,
+            inset 0 0 3rem #4128006b;
+        z-index: 10;
+    }
+}
