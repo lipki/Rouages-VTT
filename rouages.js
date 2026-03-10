@@ -80,6 +80,7 @@ class DicePool {
         this.atoutCounter = document.querySelector(".icon-box.atoutpenalite .atoutCounter");
         this.skillCounter = document.querySelector(".icon-box.atoutpenalite .skillCounter");
         this.historical = document.querySelector(".historical ul");
+        this.buttonVigueur = document.querySelector(".icon-box.vigueur span");
         this.dice = [];
         this.atout = 0;
         this.skills = 0;
@@ -87,37 +88,7 @@ class DicePool {
 
         this.bus.on("skills:changed", nb => this.updateSkills(nb));
 
-        this.bus.on("roll:start", data => {
-            this.clear();
-            this.add({className:"dice6", value:data.value});
-            this.add({className:"dice10", maxValue:10});
-
-            const penalty = Math.max(0, -this.atout);
-            const bonus = Math.max(0, this.atout);
-
-            const competenceDice = Math.max(0, this.skills - penalty);
-            let penaltyDice = Math.max(0, penalty - this.skills);
-            const bonusDice = Math.max(0, bonus - this.skills);
-
-            penaltyDice = penalty > 0 && penaltyDice == 0 && competenceDice ==0 ? 1 : penaltyDice;
-
-            Array.from({length: competenceDice}).forEach(() =>
-                this.add({className:"dice10", maxValue:10, color:"competence"})
-            );
-
-            Array.from({length: penaltyDice}).forEach(() =>
-                this.add({className:"dice10", maxValue:10, color:"penalite"})
-            );
-
-            Array.from({length: bonusDice}).forEach(() =>
-                this.add({className:"dice10", maxValue:10, color:"atout"})
-            );
-
-            this.sortAtout();
-
-            this.addHistory(data.label);
-
-        });
+        this.bus.on("roll:start", data => this.roll(data));
 
         this.buttonAtout.addEventListener("click", e => {
             this.atout ++;
@@ -128,6 +99,40 @@ class DicePool {
             this.atout --;
             this.updateAtoutLabel();
         });
+
+        this.buttonVigueur.addEventListener("click", e => {
+            this.clear();
+            this.add({className:"dice10", maxValue:10, color:"vigueur"});
+            this.addHistoryVigueur("Vigueur");
+        });
+    }
+
+    roll(data) {
+        this.clear();
+        this.add({className:"dice6", value:data.value});
+        this.add({className:"dice10", maxValue:10});
+
+        const penaltyDice = Math.max(0, -this.atout - this.skills);
+        const bonusDice = Math.max(0, this.atout);
+        const competenceDice = this.skills + this.atout;
+
+        console.log(penaltyDice, bonusDice, this.skills);
+
+        Array.from({length: competenceDice}).forEach(() =>
+            this.add({className:"dice10", maxValue:10, color:"competence"})
+        );
+
+        Array.from({length: penaltyDice}).forEach(() =>
+            this.add({className:"dice10", maxValue:10, color:"penalite"})
+        );
+
+        Array.from({length: bonusDice}).forEach(() =>
+            this.add({className:"dice10", maxValue:10, color:"atout"})
+        );
+
+        this.sortAtout();
+
+        this.addHistory(data.label);
     }
 
     updateAtoutLabel() {
@@ -142,7 +147,7 @@ class DicePool {
     addHistory(label) {
 
         const result = this.resultAtout().value;
-        const txt = `${this.atout < 0 ? 'min' : 'max'}(${this.values().join(", ")}) = ${result} : ${this.getSuccess(result)}`;
+        const txt = `${this.atout < 0 ? 'min' : 'max'}( ${this.values().join(", ")} ) = ${result} : ${this.getSuccess(result)}`;
 
         const dt_carac = document.createElement('dt');
         dt_carac.className = 'title';
@@ -153,6 +158,21 @@ class DicePool {
         dl_dice.textContent = txt;
 
         this.historical.insertBefore(dl_dice, this.historical.firstChild);
+        this.historical.insertBefore(dt_carac, this.historical.firstChild);
+
+        while (this.historical.children.length > this.MAX_HISTORY)
+            this.historical.lastChild.remove();
+
+    }
+
+    addHistoryVigueur(label) {
+
+        const result = this.highest().value;
+
+        const dt_carac = document.createElement('dt');
+        dt_carac.className = 'title';
+        dt_carac.textContent = label + " : " + result;
+
         this.historical.insertBefore(dt_carac, this.historical.firstChild);
 
         while (this.historical.children.length > this.MAX_HISTORY)

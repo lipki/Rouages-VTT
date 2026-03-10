@@ -326,6 +326,13 @@ header h1 {
 .icon-box.vigueur input {
   background-image: url(img/vigueur.svg);
 }
+.icon-box.vigueur span {
+  background: black;
+  color: white;
+  padding: 0.2rem;
+  cursor: pointer;
+  user-select: none;
+}
 
 .icon-box.blessure input {
   background-image: url(img/blessure.svg);
@@ -465,7 +472,7 @@ header h1 {
   padding: 0.3rem;
   width: 100%;
 }
-.skills-container:not(.show) button::before {
+.skills-container button::before {
   content: attr(data-icon);
   position: absolute;
   left: 0.3rem;
@@ -499,13 +506,13 @@ header h1 {
   background: transparent;
   border: 1px solid gray;
   border-radius: 0.2rem;
-  padding: 0.2rem;
+  padding: 0.2rem 0.2rem 0.2rem 1.2rem;
   font-family: var(--font-title);
 }
 .skills-container.show button.active {
   display: inline;
   border: 1px solid #000;
-  background-color: transparent;
+  background-color: #00000042;
   border-radius: 0.2rem;
 }
 
@@ -519,7 +526,7 @@ header h1 {
   position: absolute;
   transform: rotate(-11deg);
   top: 20rem;
-  left: calc(50% - 28rem);
+  left: calc(50% - 25rem);
   box-shadow: 0.5rem 0.5rem 0.5rem 0rem #00000040, inset 0 0 3rem 0 #4128006b;
   background-color: #f2f2f2;
   background-image: var(--parchment), repeating-linear-gradient(transparent, transparent calc(var(--interline) - 1px), #dfdfdf calc(var(--interline) + 0.13rem - 2px), #dfdfdf calc(var(--interline) + 0.13rem));
