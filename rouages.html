@@ -5,35 +5,39 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fiche de Personnage - Rouages</title>
-  <link rel="stylesheet" type="text/css" href="rouages.css">
+  <link rel="stylesheet" type="text/css" href="rouages2.css">
+  <script async="" src="rouages2.js"></script>
 </head>
 
 <body>
 
   <div class="sheet">
+
     <header>
       <h1>Rouages</h1>
     </header>
 
+    <div id='portrait'>
+      <img id="avatarimage" name='attr_character_avatar' alt="">
+      <div class='overlay' aria-hidden="true"></div>
+      <span>Dépose ton avatar</span>
+    </div>
+
     <div class="identity-grid">
       <div class="field">
-        <label for="attr_name">NOM</label>
+        <label for="name"><span>NOM</span></label>
         <input type="text" name="attr_name" id="attr_name" required />
       </div>
       <div class="field">
-        <label for="attr_age">AGE</label>
+        <label for="age"><span>AGE</span></label>
         <input type="text" name="attr_age" id="attr_age" required />
       </div>
-      <div class='portrait'>
-        <img class='avatarimage' name='attr_character_avatar' alt="Character Avatar" src="img/avatar.jpg">
-        <div class='overlay' aria-hidden="true"></div>
-      </div>
       <div class="field">
-        <label for="attr_people">PEUPLE</label>
+        <label for="people"><span>PEUPLE</span></label>
         <input type="text" name="attr_people" id="attr_people" required />
       </div>
       <div class="field">
-        <label for="attr_works">MÉTIER</label>
+        <label for="works"><span>MÉTIER</span></label>
         <input type="text" name="attr_works" id="attr_works" required />
       </div>
     </div>
@@ -41,31 +45,27 @@
     <div class="main-content">
       <ul class="stats-list">
         <li class="label">
-          MUSCULATURE
+          <span>MUSCULATURE</span>
           <input class="gear" type="text" maxlength="2" name="attr_mus" id="attr_mus" required />
         </li>
         <li class="label">
-          DEXTÉRITÉ
+          <span>DEXTÉRITÉ</span>
           <input class="gear" type="text" maxlength="2" name="attr_dex" id="attr_dex" required />
         </li>
         <li class="label">
-          PERCEPTION
+          <span>PERCEPTION</span>
           <input class="gear" type="text" maxlength="2" name="attr_per" id="attr_per" required />
         </li>
         <li class="label">
-          ÉDUCATION
+          <span>ÉDUCATION</span>
           <input class="gear" type="text" maxlength="2" name="attr_edu" id="attr_edu" required />
         </li>
         <li class="label">
-          INTUITION
+          <span>INTUITION</span>
           <input class="gear" type="text" maxlength="2" name="attr_int" id="attr_int" required />
         </li>
         <li class="label">
-          ÉLOQUENCE
-          <input class="gear" type="text" maxlength="2" name="attr_elo" id="attr_elo" required />
-        </li>
-        <li class="label">
-          VOLONTÉ
+          <span>VOLONTÉ</span>
           <input class="gear" type="text" maxlength="2" name="attr_vol" id="attr_vol" required />
         </li>
       </ul>
@@ -82,6 +82,10 @@
         <div class="icon-box armure">
           <input type="text" maxlength="2" name="attr_armo" id="attr_armo" required />
           <span>ARMURE</span>
+        </div>
+        <div class="icon-box lassitude">
+          <input type="text" maxlength="2" name="attr_lass" id="attr_lass" required />
+          <span>LASSITUDE</span>
         </div>
         <div class="icon-box penetration">
           <input type="text" maxlength="2" name="attr_pene" id="attr_pene" required />
@@ -100,25 +104,60 @@
 
     <div class="notebook-container">
       <div>
-        <h3>CAPACITÉS</h3>
-        <textarea class="notebook" name="attr_capa" id="attr_capa" ></textarea>
+        <h3><span>CAPACITÉS</span></h3>
+        <textarea class="notebook" name="attr_capa" id="attr_capa"></textarea>
       </div>
       <div>
-        <h3>COMPÉTENCES</h3>
-        <textarea class="notebook" name="attr_skil" id="attr_skil" ></textarea>
+        <h3><span>COMPÉTENCES</span></h3>
+        <div class="skills-container">
+          <div class="skills-list">
+            <button type="button" data-icon="🛠" id="attr_bricolage">Bricolage</button>
+            <button type="button" data-icon="🗡" id="attr_brigandage">Brigandage</button>
+            <button type="button" data-icon="🕶" id="attr_discretion">Discrétion</button>
+            <button type="button" data-icon="⚟" id="attr_eloquence">Eloquence</button>
+            <button type="button" data-icon="🕸" id="attr_intrigues">Intrigues</button>
+            <button type="button" data-icon="🕮" id="attr_legendes">Légendes</button>
+            <button type="button" data-icon="☤" id="attr_medecine">Médecine</button>
+            <button type="button" data-icon="☈" id="attr_mobilite">Mobilité</button>
+            <button type="button" data-icon="☙" id="attr_nature">Nature</button>
+            <button type="button" data-icon="🏛" id="attr_politique">Politique</button>
+            <button type="button" data-icon="⚿" id="attr_psychologie">Psychologie</button>
+            <button type="button" data-icon="🛡" id="attr_resistance">Résistance</button>
+            <button type="button" data-icon="⚛" id="attr_sciencesabstraites">Sciences Abstraites</button>
+            <button type="button" data-icon="⚔" id="attr_entrainementsmartiaux">Entraînements martiaux</button>
+          </div>
+          <div class="technique skills-list">
+            <h4>Disciplines techniques</h4>
+            <button type="button" data-icon="☘" id="attr_apothicairerie">Apothicairerie</button>
+            <button type="button" data-icon="⚗" id="attr_alchimie">Alchimie</button>
+            <button type="button" data-icon="🛡" id="attr_armurerie">Armurerie</button>
+            <button type="button" data-icon="⚙" id="attr_mecanique">Mécanique</button>
+            <button type="button" data-icon="⚠" id="attr_electricité">Electricité</button>
+            <button type="button" data-icon="☢" id="attr_explosifs">Explosifs</button>
+          </div>
+        </div>
+        <button id="skills-update" type="button">🖋</button>
       </div>
     </div>
 
     <div class="notebook-container">
       <div>
-        <h3>EQUIPEMENT</h3>
-        <textarea class="notebook" name="attr_equi" id="attr_equi" ></textarea>
+        <h3><span>EQUIPEMENT</span></h3>
+        <textarea class="notebook" name="attr_equi" id="attr_equi"></textarea>
       </div>
       <div>
-        <h3>CONTACTS</h3>
-        <textarea class="notebook" name="attr_cont" id="attr_cont" ></textarea>
+        <h3><span>CONTACTS</span></h3>
+        <textarea class="notebook" name="attr_cont" id="attr_cont"></textarea>
       </div>
     </div>
+  </div>
+
+  <div class="dice-box"></div>
+
+  <div class="historical">
+    <h2>Historique</h2>
+    <ul>
+    </ul>
   </div>
 
 </body>
