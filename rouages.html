@@ -5,160 +5,187 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fiche de Personnage - Rouages</title>
-  <link rel="stylesheet" type="text/css" href="rouages2.css">
-  <script async="" src="rouages2.js"></script>
+  <link rel="stylesheet" type="text/css" href="rouages3.css">
+  <script async="" src="rouages3.js"></script>
 </head>
 
 <body>
 
-  <div class="sheet">
+  <div class="sheet-container">
 
-    <header>
-      <h1>Rouages</h1>
-    </header>
+    <div class="sheet">
 
-    <div id='portrait'>
-      <img id="avatarimage" name='attr_character_avatar' alt="">
-      <div class='overlay' aria-hidden="true"></div>
-      <span>Dépose ton avatar</span>
-    </div>
+      <div class="sheet-front">
 
-    <div class="identity-grid">
-      <div class="field">
-        <label for="name"><span>NOM</span></label>
-        <input type="text" name="attr_name" id="attr_name" required />
-      </div>
-      <div class="field">
-        <label for="age"><span>AGE</span></label>
-        <input type="text" name="attr_age" id="attr_age" required />
-      </div>
-      <div class="field">
-        <label for="people"><span>PEUPLE</span></label>
-        <input type="text" name="attr_people" id="attr_people" required />
-      </div>
-      <div class="field">
-        <label for="works"><span>MÉTIER</span></label>
-        <input type="text" name="attr_works" id="attr_works" required />
-      </div>
-    </div>
+        <header>
+          <h1>Rouages</h1>
+        </header>
 
-    <div class="main-content">
-      <ul class="stats-list">
-        <li class="label">
-          <span>MUSCULATURE</span>
-          <input class="gear" type="text" maxlength="2" name="attr_mus" id="attr_mus" required />
-        </li>
-        <li class="label">
-          <span>DEXTÉRITÉ</span>
-          <input class="gear" type="text" maxlength="2" name="attr_dex" id="attr_dex" required />
-        </li>
-        <li class="label">
-          <span>PERCEPTION</span>
-          <input class="gear" type="text" maxlength="2" name="attr_per" id="attr_per" required />
-        </li>
-        <li class="label">
-          <span>ÉDUCATION</span>
-          <input class="gear" type="text" maxlength="2" name="attr_edu" id="attr_edu" required />
-        </li>
-        <li class="label">
-          <span>INTUITION</span>
-          <input class="gear" type="text" maxlength="2" name="attr_int" id="attr_int" required />
-        </li>
-        <li class="label">
-          <span>VOLONTÉ</span>
-          <input class="gear" type="text" maxlength="2" name="attr_vol" id="attr_vol" required />
-        </li>
-      </ul>
+        <div id='portrait'>
+          <img id="avatarimage" name='attr_character_avatar' alt="">
+          <div class='overlay' aria-hidden="true"></div>
+          <span>Dépose ton avatar</span>
+        </div>
 
-      <div class="icons-grid">
-        <div class="icon-box vigueur">
-          <input type="text" maxlength="2" name="attr_stre" id="attr_stre" required />
-          <span>VIGUEUR</span>
-        </div>
-        <div class="icon-box blessure">
-          <input type="text" maxlength="2" name="attr_woun" id="attr_woun" required />
-          <span>BLESSURES</span>
-        </div>
-        <div class="icon-box armure">
-          <input type="text" maxlength="2" name="attr_armo" id="attr_armo" required />
-          <span>ARMURE</span>
-        </div>
-        <div class="icon-box lassitude">
-          <input type="text" maxlength="2" name="attr_lass" id="attr_lass" required />
-          <span>LASSITUDE</span>
-        </div>
-        <div class="icon-box penetration">
-          <input type="text" maxlength="2" name="attr_pene" id="attr_pene" required />
-          <span>PÉNÉTRATION</span>
-        </div>
-        <div class="icon-box pi">
-          <input type="text" maxlength="2" name="attr_pi" id="attr_pi" required />
-          <span>PI</span>
-        </div>
-        <div class="icon-box ingredient">
-          <input type="text" maxlength="2" name="attr_ingr" id="attr_ingr" required />
-          <span>INGRÉDIENTS</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="notebook-container">
-      <div>
-        <h3><span>CAPACITÉS</span></h3>
-        <textarea class="notebook" name="attr_capa" id="attr_capa"></textarea>
-      </div>
-      <div>
-        <h3><span>COMPÉTENCES</span></h3>
-        <div class="skills-container">
-          <div class="skills-list">
-            <button type="button" data-icon="🛠" id="attr_bricolage">Bricolage</button>
-            <button type="button" data-icon="🗡" id="attr_brigandage">Brigandage</button>
-            <button type="button" data-icon="🕶" id="attr_discretion">Discrétion</button>
-            <button type="button" data-icon="⚟" id="attr_eloquence">Eloquence</button>
-            <button type="button" data-icon="🕸" id="attr_intrigues">Intrigues</button>
-            <button type="button" data-icon="🕮" id="attr_legendes">Légendes</button>
-            <button type="button" data-icon="☤" id="attr_medecine">Médecine</button>
-            <button type="button" data-icon="☈" id="attr_mobilite">Mobilité</button>
-            <button type="button" data-icon="☙" id="attr_nature">Nature</button>
-            <button type="button" data-icon="🏛" id="attr_politique">Politique</button>
-            <button type="button" data-icon="⚿" id="attr_psychologie">Psychologie</button>
-            <button type="button" data-icon="🛡" id="attr_resistance">Résistance</button>
-            <button type="button" data-icon="⚛" id="attr_sciencesabstraites">Sciences Abstraites</button>
-            <button type="button" data-icon="⚔" id="attr_entrainementsmartiaux">Entraînements martiaux</button>
+        <div class="identity">
+          <div class="field">
+            <label for="name"><span>NOM</span></label>
+            <input type="text" name="attr_name" id="attr_name" required />
           </div>
-          <div class="technique skills-list">
-            <h4>Disciplines techniques</h4>
-            <button type="button" data-icon="☘" id="attr_apothicairerie">Apothicairerie</button>
-            <button type="button" data-icon="⚗" id="attr_alchimie">Alchimie</button>
-            <button type="button" data-icon="🛡" id="attr_armurerie">Armurerie</button>
-            <button type="button" data-icon="⚙" id="attr_mecanique">Mécanique</button>
-            <button type="button" data-icon="⚠" id="attr_electricité">Electricité</button>
-            <button type="button" data-icon="☢" id="attr_explosifs">Explosifs</button>
+          <div class="field">
+            <label for="age"><span>AGE</span></label>
+            <input type="text" name="attr_age" id="attr_age" required />
+          </div>
+          <div class="field">
+            <label for="people"><span>PEUPLE</span></label>
+            <input type="text" name="attr_people" id="attr_people" required />
+          </div>
+          <div class="field">
+            <label for="works"><span>MÉTIER</span></label>
+            <input type="text" name="attr_works" id="attr_works" required />
           </div>
         </div>
-        <button id="skills-update" type="button">🖋</button>
+
+        <div class="main-content">
+          <ul class="stats-list">
+            <li class="label">
+              <span>MUSCULATURE</span>
+              <input class="gear" type="text" maxlength="2" name="carac_mus" id="carac_mus" data-stat="mus" required />
+            </li>
+            <li class="label">
+              <span>DEXTÉRITÉ</span>
+              <input class="gear" type="text" maxlength="2" name="carac_dex" id="carac_dex" data-stat="dex" required />
+            </li>
+            <li class="label">
+              <span>PERCEPTION</span>
+              <input class="gear" type="text" maxlength="2" name="carac_per" id="carac_per" data-stat="per" required />
+            </li>
+            <li class="label">
+              <span>ÉDUCATION</span>
+              <input class="gear" type="text" maxlength="2" name="carac_edu" id="carac_edu" data-stat="edu" required />
+            </li>
+            <li class="label">
+              <span>INTUITION</span>
+              <input class="gear" type="text" maxlength="2" name="carac_int" id="carac_int" data-stat="int" required />
+            </li>
+            <li class="label">
+              <span>VOLONTÉ</span>
+              <input class="gear" type="text" maxlength="2" name="carac_vol" id="carac_vol" data-stat="vol" required />
+            </li>
+          </ul>
+
+          <div class="icons-grid">
+            <div class="icon-box vigueur">
+              <input type="text" maxlength="2" name="carac_vigu" id="carac_vigu" data-stat="vigu" required />
+              <span>VIGUEUR</span>
+            </div>
+            <div class="icon-box blessure">
+              <input type="text" maxlength="2" name="carac_bles" id="carac_bles" data-stat="bles" required />
+              <span>BLESSURES</span>
+            </div>
+            <div class="icon-box armure">
+              <input type="text" maxlength="2" name="carac_armu" id="carac_armu" data-stat="armu" required />
+              <span>ARMURE</span>
+            </div>
+            <div class="icon-box lassitude">
+              <input type="text" maxlength="2" name="carac_lass" id="carac_lass" data-stat="lass" required />
+              <span>LASSITUDE</span>
+            </div>
+            <div class="icon-box penetration">
+              <input type="text" maxlength="2" name="carac_pene" id="carac_pene" data-stat="pene" required />
+              <span>PÉNÉTRATION</span>
+            </div>
+            <div class="icon-box pi">
+              <input type="text" maxlength="2" name="carac_pi" id="carac_pi" data-stat="pi" required />
+              <span>PI</span>
+            </div>
+            <div class="icon-box ingredient">
+              <input type="text" maxlength="2" name="carac_ingr" id="carac_ingr" data-stat="ingr" required />
+              <span>INGRÉDIENTS</span>
+            </div>
+            <div class="icon-box atoutpenalite">
+              <button id="comp_atout">Atout</button>
+              <span class="atoutCounter">0 Atout</span>
+              <span class="skillCounter">0 Comp.</span>
+              <button id="comp_penalite">Penalité</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="notebook-container">
+          <div id="zone_capa">
+            <h3><span>CAPACITÉS</span><button class="add-drawer">➕</button></h3>
+            <div class="drawers-container"></div>
+          </div>
+          <div>
+            <h3><span>COMPÉTENCES</span></h3>
+            <div class="skills-container">
+              <div class="skills-list">
+                <button data-icon="🛠" id="comp_bricolage">Bricolage</button>
+                <button data-icon="🗡" id="comp_brigandage">Brigandage</button>
+                <button data-icon="🕶" id="comp_discretion">Discrétion</button>
+                <button data-icon="⚟" id="comp_eloquence">Eloquence</button>
+                <button data-icon="🕸" id="comp_intrigues">Intrigues</button>
+                <button data-icon="🕮" id="comp_legendes">Légendes</button>
+                <button data-icon="☤" id="comp_medecine">Médecine</button>
+                <button data-icon="☈" id="comp_mobilite">Mobilité</button>
+                <button data-icon="☙" id="comp_nature">Nature</button>
+                <button data-icon="🏛" id="comp_politique">Politique</button>
+                <button data-icon="⚿" id="comp_psychologie">Psychologie</button>
+                <button data-icon="🛡" id="comp_resistance">Résistance</button>
+                <button data-icon="⚛" id="comp_sciencesabstraites">Scien. Abstraites</button>
+                <button data-icon="⚔" id="comp_entrainementsmartiaux">Entr. martiaux</button>
+              </div>
+              <div class="technique skills-list">
+                <h4>Disciplines techniques</h4>
+                <button data-icon="☘" id="comp_apothicairerie">Apothicairerie</button>
+                <button data-icon="⚗" id="comp_alchimie">Alchimie</button>
+                <button data-icon="🕱" id="comp_armurerie">Armurerie</button>
+                <button data-icon="⚙" id="comp_mecanique">Mécanique</button>
+                <button data-icon="🗲" id="comp_electricite">Electricité</button>
+                <button data-icon="☢" id="comp_explosifs">Explosifs</button>
+              </div>
+            </div>
+            <button id="skills-update" type="button">🖋</button>
+          </div>
+        </div>
+
+        <div class="notebook-container">
+          <div>
+            <h3><span>EQUIPEMENT</span></h3>
+            <textarea class="notebook" name="attr_equi" id="attr_equi"></textarea>
+          </div>
+          <div id="zone_contacts">
+            <h3><span>CONTACTS</span><button class="add-drawer">➕</button></h3>
+            <div class="drawers-container"></div>
+          </div>
+        </div>
+
       </div>
+
+      <div class="sheet-back">
+
+        <header>
+          <h1>Rouages</h1>
+        </header>
+
+        <h2>Notes</h2>
+        <textarea class="notes"></textarea>
+
+      </div>
+
+      <div class="page-corner"></div>
+
     </div>
 
-    <div class="notebook-container">
-      <div>
-        <h3><span>EQUIPEMENT</span></h3>
-        <textarea class="notebook" name="attr_equi" id="attr_equi"></textarea>
-      </div>
-      <div>
-        <h3><span>CONTACTS</span></h3>
-        <textarea class="notebook" name="attr_cont" id="attr_cont"></textarea>
-      </div>
+    <div class="historical">
+      <h2>Historique</h2>
+      <ul></ul>
     </div>
+
   </div>
 
   <div class="dice-box"></div>
-
-  <div class="historical">
-    <h2>Historique</h2>
-    <ul>
-    </ul>
-  </div>
 
 </body>
 
