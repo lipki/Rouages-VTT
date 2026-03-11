@@ -54,28 +54,25 @@
             font-weight: bold;
         }
 
-        .gear {
+        .gear[data-value="1"],
+        .gear[data-value="2"],
+        .gear[data-value="3"] {
+            background-image: url(../img/faible.svg);
+        }
 
-            &[data-value="1"],
-            &[data-value="2"],
-            &[data-value="3"] {
-                background-image: url(../img/faible.svg);
-            }
+        .gear[data-value="4"],
+        .gear[data-value="5"] {
+            background-image: url(../img/ordinaire.svg);
+        }
 
-            &[data-value="4"],
-            &[data-value="5"] {
-                background-image: url(../img/ordinaire.svg);
-            }
+        .gear[data-value="6"],
+        .gear[data-value="7"],
+        .gear[data-value="8"] {
+            background-image: url(../img/haut.svg);
+        }
 
-            &[data-value="6"],
-            &[data-value="7"],
-            &[data-value="8"] {
-                background-image: url(../img/haut.svg);
-            }
-
-            &[data-value="9"] {
-                background-image: url(../img/exceptionnel.svg);
-            }
+        .gear[data-value="9"] {
+            background-image: url(../img/exceptionnel.svg);
         }
 
         li:nth-child(odd) .gear {
