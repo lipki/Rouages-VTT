@@ -60,7 +60,7 @@ export class Sheet {
     loadData( selector, value ) {
         const el = document.querySelector(`[data-action="${selector}"]`);
         if( el ) el.value = value;
-        if( el && el.tagName == "IMG" ) el.src = value;
+        if( el && el.tagName == "IMG" ) el.src = value || "";
         if( el && el.tagName == "BUTTON" ) value ? el.classList.add("active") : el.classList.remove("active");
         if( el && el.tagName == "DIV" ) value.forEach(d => el.addDrawer(d.title, d.content, false));
 

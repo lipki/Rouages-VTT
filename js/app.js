@@ -1,7 +1,7 @@
 import { PlayerManager } from "./PlayerManager.js";
 import { Sheet } from "./Sheet.js";
 
-window.addEventListener("pageshow", () => new App());
+window.addEventListener("DOMContentLoaded", () => window.app = new App());
 
 class App {
 
