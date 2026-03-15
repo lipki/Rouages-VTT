@@ -1,25 +1,15 @@
 export class SkillManager {
 
-    constructor( store, bus ) {
+    constructor( bus, playerID ) {
         this.buttons = document.querySelectorAll(".skills-list button");
-        this.updateBtn = document.getElementById("skills-update");
         this.container = document.getElementById("skills-container");
         this.title = document.querySelector(".technique h4");
-        this.store = store;
         this.bus = bus;
+        this.playerID = playerID;
 
         this.isUpdateMode = false;
 
-        this.load();
-        this.bindEvents();
-    }
-
-    load() {
-        this.buttons.forEach(button => { if (this.store.get(button.id)) button.classList.add("active") });
-    }
-
-    bindEvents() {
-        this.updateBtn.addEventListener("click", () => this.toggleUpdateMode());
+        document.getElementById("skills-update").addEventListener("click", () => this.toggleUpdateMode());
         this.buttons.forEach(button => button.addEventListener("click", e => this.clickSkill(e.target)));
     }
 
@@ -35,15 +25,16 @@ export class SkillManager {
     clickSkill(button) {
         if (this.isUpdateMode)
             this.updateSkill(button);
-        else this.selectSkill(button);
+        else
+            this.selectSkill(button);
     }
 
     updateSkill(button) {
         button.classList.toggle("active");
         if (!button.classList.contains("active"))
-            this.store.remove(button.id);
+            this.bus.emit("sheet:change", { id: this.playerID, key: button.dataset.action, value: false });
         else
-            this.store.set(button.id, true);
+            this.bus.emit("sheet:change", { id: this.playerID, key: button.dataset.action, value: true });
     }
 
     selectSkill(button) {

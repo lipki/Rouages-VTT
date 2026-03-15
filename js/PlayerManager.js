@@ -1,52 +1,58 @@
 export class PlayerManager {
 
-    constructor(bus) {
+    constructor(bus, playerLocalID) {
 
         this.bus = bus
         this.players = new Map();
-        this.localPlayers = null;
+        this.playerLocalID = playerLocalID;
 
-        bus.on("ws:hello", data => this.addPlayer(data))
-        bus.on("ws:disconnect", id => this.removePlayer(id))
-        bus.on("ws:sheet:update", data => this.updateSheet(data))
-        bus.on("ws:roll", data => this.updateRoll(data))
+        bus.on("player:new", playerData => this.addPlayer(playerData));
+        bus.on("player:remove", wsid => this.removePlayer(wsid));
+        bus.on("sheet:change", sheetChangeData => this.dispatchChangeToPlayer(sheetChangeData));
+
+        this.playerListEl = document.getElementById("players-list");
 
     }
 
-    addPlayer(data = null) {
-        const player = new Player(data);
-        this.players.set(player.id, player);
-        this.bus.emit("players:changed", this.players);
-        return player;
-    }
+    addPlayer(playerData = null) {
 
-    addPlayerLocal( data ) {
-        const player = this.addPlayer( data );
-        player.localPlayer = true;
+        let player = null;
+
+        if( !this.players.get(playerData.id) ) {
+            player = new Player(this.bus, playerData.sheet, playerData.id, playerData.role);
+            this.players.set(player.id, player);
+            if( this.playerLocalID == player.id ) player.local = true;
+        } else {
+            player = this.players.get(playerData.id);
+            player.updateData(playerData.sheet);
+        }
+
         return player;
     }
 
     removePlayer(id) {
         this.players.delete(id);
-        this.bus.emit("players:changed", this.players);
     }
 
-    updateSheet(data) {
-        const player = this.players.get(data.id);
-        if (!player) return
-        //player.sheet ??= {}
-        //player.sheet[data.key] = data.value
-        //TODO
+    dispatchChangeToPlayer(sheetChangeData) {
+        if (this.get(sheetChangeData?.id))
+            this.get(sheetChangeData?.id).partialUpdate(sheetChangeData);
     }
+
+    get(id) {
+        return this.players.get(id);
+    }
+
+    getLocal() {
+        return this.players.get(this.playerLocalID);
+    }
+
+    /*
 
     updateRoll(data) {
         //const player = this.players.get(data.id)
         //if(!player) return
         //player.lastRoll = data
-    }
-
-    get(id) {
-        return this.players.get(id);
     }
 
     getAll() {
@@ -59,88 +65,117 @@ export class PlayerManager {
 
     getPlayers() {
         return this.getAll().find(p => p.role === "player");
-    }
+    }*/
 
 }
 
-export class Player {
+class Player {
 
-    constructor(data) {
-        this.id = data?.id; //randomUUID();
-        this.localPlayer = false;
+    constructor(bus, sheet, id, role) {
+        this.bus = bus;
+        this.id = id;
+        this.role = role ?? "player";
+        this.local = false;
 
-        if( data ) this.updateData(data);
+        if (sheet) this.updateData(sheet);
+
+        this.bus.on("network:request", () => this.bus.emit("player:full", {id:this.id, sheet:sheet}));
     }
 
-    updateData(data) {
+    updateData(sheet_) {
 
-        this.identity = Object.assign(
-            { name: "", people: "", age: "", occupation: "", portrait: "" },
-            data?.identity
+        const sheet = this.sheet = {};
+
+        sheet.identity = Object.assign(
+            {
+                name: "",
+                people: "",
+                age: "",
+                occupation: "",
+                portrait: ""
+            },
+            sheet_?.identity
         );
 
-        this.role = data?.role ?? "player";
-
-        this.stats = Object.assign(
-            { mus: 0, dex: 0, per: 0, edu: 0, int: 0, vol: 0 },
-            data?.identity
+        sheet.stats = Object.assign(
+            {
+                mus: 0,
+                dex: 0,
+                per: 0,
+                edu: 0,
+                int: 0,
+                vol: 0
+            },
+            sheet_?.stats
         );
 
-        this.derivedStats = {};
-        this.derivedStats.stamina = 0;
-        this.derivedStats.injuries = 0;
-        this.derivedStats.armor = 0;
-        this.derivedStats.weakness = 0;
-        this.derivedStats.penetration = 0;
-        this.derivedStats.pi = 0;
-        this.derivedStats.ingredients = 0;
+        sheet.derivedStats = Object.assign(
+            {
+                stamina: 0,
+                injuries: 0,
+                armor: 0,
+                weakness: 0,
+                penetration: 0,
+                pi: 0,
+                ingredients: 0
+            },
+            sheet_?.derivedStats
+        );
 
-        this.abilities = {};
+        sheet.abilities = sheet_?.abilities ?? [];
 
-        this.skills = {};
-        this.skills.tinkering = false;
-        this.skills.brigandage = false;
-        this.skills.stealth = false;
-        this.skills.eloquence = false;
-        this.skills.intrigue = false;
-        this.skills.legends = false;
-        this.skills.medicine = false;
-        this.skills.mobility = false;
-        this.skills.nature = false;
-        this.skills.politics = false;
-        this.skills.psychology = false;
-        this.skills.resistance = false;
-        this.skills.abstractSciences = false;
-        this.skills.martialTraining = "";
+        sheet.skills = Object.assign(
+            {
+                tinkering: false,
+                brigandage: false,
+                stealth: false,
+                eloquence: false,
+                intrigue: false,
+                legends: false,
+                medicine: false,
+                mobility: false,
+                nature: false,
+                politics: false,
+                psychology: false,
+                resistance: false,
+                abstractSciences: false,
+                martialTraining: ""
+            },
+            sheet_?.skills
+        );
 
-        this.techSkills = {};
-        this.techSkills.apothecary = "";
-        this.techSkills.apothecary = "";
-        this.techSkills.alchemy = "";
-        this.techSkills.armormaking = "";
-        this.techSkills.mechanics = "";
-        this.techSkills.electricity = "";
-        this.techSkills.explosives = "";
+        sheet.techSkills = Object.assign(
+            {
+                apothecary: "",
+                apothecary: "",
+                alchemy: "",
+                armormaking: "",
+                mechanics: "",
+                electricity: "",
+                explosives: ""
+            },
+            sheet_?.techSkills
+        );
 
-        this.equipment = "";
+        sheet.equipment = sheet_?.equipment ?? "";
 
-        this.contacts = {};
+        sheet.contacts = sheet_?.contacts ?? [];
 
-        this.log = {};
+        sheet.notes = sheet_?.notes ?? "";
 
-        this.notes = "";
+        this.bus.emit("player:ready", {id:this.id, sheet:sheet});
+    }
+
+    partialUpdate(sheetChangeData) {
+
+        if( sheetChangeData.key == undefined ) return;
+        sheetChangeData.id = undefined;
+        const keys = sheetChangeData.key.split("_");
+        const last = keys.pop();
+        const target = keys.reduce((o, k) => o[k], this.sheet);
+        target[last] = sheetChangeData.value;
+
+        this.bus.emit("player:updated", {id:this.id, sheet:this.sheet});
     }
 
 }
-
-/*
-Atout
-pénalité
-
-Légendaire
-Improbable
-Difficile
-Facile
-Routine
-Echec
-*/

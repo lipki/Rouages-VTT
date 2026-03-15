@@ -33,6 +33,10 @@ body {
     font-family: var(--font-title);
 }
 
+.preload-hide {
+    display:none;
+}
+
 textarea {
     --interline: 1rem;
     padding: 0.2rem 0rem;
@@ -182,4 +186,11 @@ header {
         }
     }
 
+}
+
+/* other */
+#clear {
+  position: absolute;
+  top: 0;
+  left: -5rem;
 }

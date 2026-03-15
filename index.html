@@ -14,13 +14,21 @@
   <link rel="stylesheet" type="text/css" href="css/equipment.css">
   <link rel="stylesheet" type="text/css" href="css/historical.css">
   <link rel="stylesheet" type="text/css" href="css/dice.css">
+  <link rel="stylesheet" type="text/css" href="css/players-list.css">
   <link rel="stylesheet" type="text/css" href="css/print.css" media="print">
   <script async="" src="js/app.js" type="module"></script>
 </head>
 
 <body>
+  <div id="network-wait"></div>
 
-  <div class="sheet-container">
+  <div id="history" class="preload-hide">
+    <h2>Historique</h2>
+    <ul></ul>
+  </div>
+
+  <div class="sheet-container preload-hide">
+    <button id="clear">Clear</button>
 
     <div class="sheet">
 
@@ -31,27 +39,27 @@
         </header>
 
         <div id='zone-portrait'>
-          <img id="avatarimage" name='attr_character_avatar' alt="">
+          <img id="avatarimage" alt="" data-action='identity_portrait'>
           <div class='overlay' aria-hidden="true"></div>
           <span>Dépose ton avatar</span>
         </div>
 
         <div id="zone-identity">
           <div class="field">
-            <label for="name"><span>NOM</span></label>
-            <input type="text" name="attr_name" id="attr_name" required />
+            <label><span>NOM</span></label>
+            <input type="text" data-action="identity_name" />
           </div>
           <div class="field">
-            <label for="age"><span>AGE</span></label>
-            <input type="text" name="attr_age" id="attr_age" required />
+            <label><span>AGE</span></label>
+            <input type="text" data-action="identity_age" />
           </div>
           <div class="field">
-            <label for="people"><span>PEUPLE</span></label>
-            <input type="text" name="attr_people" id="attr_people" required />
+            <label><span>PEUPLE</span></label>
+            <input type="text" data-action="identity_people" />
           </div>
           <div class="field">
-            <label for="works"><span>MÉTIER</span></label>
-            <input type="text" name="attr_works" id="attr_works" required />
+            <label><span>MÉTIER</span></label>
+            <input type="text" data-action="identity_occupation" />
           </div>
         </div>
 
@@ -59,57 +67,57 @@
           <ul id="stats-list">
             <li class="label">
               <span>MUSCULATURE</span>
-              <input class="gear" type="text" maxlength="2" name="carac_mus" id="carac_mus" data-stat="mus" required />
+              <input class="gear" type="text" maxlength="2" data-action="stats_mus" />
             </li>
             <li class="label">
               <span>DEXTÉRITÉ</span>
-              <input class="gear" type="text" maxlength="2" name="carac_dex" id="carac_dex" data-stat="dex" required />
+              <input class="gear" type="text" maxlength="2" data-action="stats_dex" />
             </li>
             <li class="label">
               <span>PERCEPTION</span>
-              <input class="gear" type="text" maxlength="2" name="carac_per" id="carac_per" data-stat="per" required />
+              <input class="gear" type="text" maxlength="2" data-action="stats_per" />
             </li>
             <li class="label">
               <span>ÉDUCATION</span>
-              <input class="gear" type="text" maxlength="2" name="carac_edu" id="carac_edu" data-stat="edu" required />
+              <input class="gear" type="text" maxlength="2" data-action="stats_edu" />
             </li>
             <li class="label">
               <span>INTUITION</span>
-              <input class="gear" type="text" maxlength="2" name="carac_int" id="carac_int" data-stat="int" required />
+              <input class="gear" type="text" maxlength="2" data-action="stats_int" />
             </li>
             <li class="label">
               <span>VOLONTÉ</span>
-              <input class="gear" type="text" maxlength="2" name="carac_vol" id="carac_vol" data-stat="vol" required />
+              <input class="gear" type="text" maxlength="2" data-action="stats_vol" />
             </li>
           </ul>
 
           <div id="stats-grid">
             <div class="icon-box vigueur">
-              <input type="text" maxlength="2" name="carac_vigu" id="carac_vigu" data-stat="vigu" required />
+              <input type="text" maxlength="2" data-action="derivedStats_stamina" />
               <span>VIGUEUR</span>
             </div>
             <div class="icon-box blessure">
-              <input type="text" maxlength="2" name="carac_bles" id="carac_bles" data-stat="bles" required />
+              <input type="text" maxlength="2" data-action="derivedStats_injuries" />
               <span>BLESSURES</span>
             </div>
             <div class="icon-box armure">
-              <input type="text" maxlength="2" name="carac_armu" id="carac_armu" data-stat="armu" required />
+              <input type="text" maxlength="2" data-action="derivedStats_armor" />
               <span>ARMURE</span>
             </div>
             <div class="icon-box lassitude">
-              <input type="text" maxlength="2" name="carac_lass" id="carac_lass" data-stat="lass" required />
+              <input type="text" maxlength="2" data-action="derivedStats_weakness" />
               <span>LASSITUDE</span>
             </div>
             <div class="icon-box penetration">
-              <input type="text" maxlength="2" name="carac_pene" id="carac_pene" data-stat="pene" required />
+              <input type="text" maxlength="2" data-action="derivedStats_penetration" />
               <span>PÉNÉTRATION</span>
             </div>
             <div class="icon-box pi">
-              <input type="text" maxlength="2" name="carac_pi" id="carac_pi" data-stat="pi" required />
+              <input type="text" maxlength="2" data-action="derivedStats_pi" />
               <span>PI</span>
             </div>
             <div class="icon-box ingredient">
-              <input type="text" maxlength="2" name="carac_ingr" id="carac_ingr" data-stat="ingr" required />
+              <input type="text" maxlength="2" data-action="derivedStats_ingredients" />
               <span>INGRÉDIENTS</span>
             </div>
             <div class="icon-box atoutpenalite">
@@ -122,7 +130,7 @@
         </div>
 
         <div class="notebook-container">
-          <div id="zone-capa">
+          <div id="zone-capa" data-action="abilities">
             <h3><span>CAPACITÉS</span><button class="add-drawer">➕</button></h3>
             <div class="drawers-container"></div>
           </div>
@@ -130,29 +138,29 @@
             <h3><span>COMPÉTENCES</span><button id="skills-update" type="button">🖋</button></h3>
             <div id="skills-container">
               <div class="skills-list">
-                <button data-icon="🛠" id="comp_bricolage">Bricolage</button>
-                <button data-icon="🗡" id="comp_brigandage">Brigandage</button>
-                <button data-icon="🕶" id="comp_discretion">Discrétion</button>
-                <button data-icon="⚟" id="comp_eloquence">Eloquence</button>
-                <button data-icon="🕸" id="comp_intrigues">Intrigues</button>
-                <button data-icon="🕮" id="comp_legendes">Légendes</button>
-                <button data-icon="☤" id="comp_medecine">Médecine</button>
-                <button data-icon="☈" id="comp_mobilite">Mobilité</button>
-                <button data-icon="☙" id="comp_nature">Nature</button>
-                <button data-icon="🏛" id="comp_politique">Politique</button>
-                <button data-icon="⚿" id="comp_psychologie">Psychologie</button>
-                <button data-icon="🛡" id="comp_resistance">Résistance</button>
-                <button data-icon="⚛" id="comp_sciencesabstraites">Scien. Abstraites</button>
-                <button data-icon="⚔" id="comp_entrainementsmartiaux">Entr. martiaux</button>
+                <button data-icon="🛠" data-action="skills_tinkering">Bricolage</button>
+                <button data-icon="🗡" data-action="skills_brigandage">Brigandage</button>
+                <button data-icon="🕶" data-action="skills_stealth">Discrétion</button>
+                <button data-icon="⚟" data-action="skills_eloquence">Eloquence</button>
+                <button data-icon="🕸" data-action="skills_intrigue">Intrigues</button>
+                <button data-icon="🕮" data-action="skills_legends">Légendes</button>
+                <button data-icon="☤" data-action="skills_medicine">Médecine</button>
+                <button data-icon="☈" data-action="skills_mobility">Mobilité</button>
+                <button data-icon="☙" data-action="skills_nature">Nature</button>
+                <button data-icon="🏛" data-action="skills_politics">Politique</button>
+                <button data-icon="⚿" data-action="skills_psychology">Psychologie</button>
+                <button data-icon="🛡" data-action="skills_resistance">Résistance</button>
+                <button data-icon="⚛" data-action="skills_abstractSciences">Scien. Abstraites</button>
+                <button data-icon="⚔" data-action="skills_martialTraining">Entr. martiaux</button>
               </div>
               <div class="technique skills-list">
                 <h4>Disciplines techniques</h4>
-                <button data-icon="☘" id="comp_apothicairerie">Apothicairerie</button>
-                <button data-icon="⚗" id="comp_alchimie">Alchimie</button>
-                <button data-icon="🕱" id="comp_armurerie">Armurerie</button>
-                <button data-icon="⚙" id="comp_mecanique">Mécanique</button>
-                <button data-icon="🗲" id="comp_electricite">Electricité</button>
-                <button data-icon="☢" id="comp_explosifs">Explosifs</button>
+                <button data-icon="☘" data-action="techSkills_apothecary">Apothicairerie</button>
+                <button data-icon="⚗" data-action="techSkills_alchemy">Alchimie</button>
+                <button data-icon="🕱" data-action="techSkills_armormaking">Armurerie</button>
+                <button data-icon="⚙" data-action="techSkills_mechanics">Mécanique</button>
+                <button data-icon="🗲" data-action="techSkills_electricity">Electricité</button>
+                <button data-icon="☢" data-action="techSkills_explosives">Explosifs</button>
               </div>
             </div>
           </div>
@@ -161,9 +169,9 @@
         <div class="notebook-container">
           <div id="zone-equipment">
             <h3><span>EQUIPEMENT</span></h3>
-            <textarea class="notebook" name="attr_equi" id="attr_equi"></textarea>
+            <textarea class="notebook" data-action="equipment"></textarea>
           </div>
-          <div id="zone-contacts">
+          <div id="zone-contacts" data-action="contacts">
             <h3><span>CONTACTS</span><button class="add-drawer">➕</button></h3>
             <div class="drawers-container"></div>
           </div>
@@ -178,7 +186,7 @@
         </header>
 
         <h2>Notes</h2>
-        <textarea class="notes"></textarea>
+        <textarea class="notes" data-action="notes"></textarea>
 
       </div>
 
@@ -186,14 +194,11 @@
 
     </div>
 
-    <div class="historical">
-      <h2>Historique</h2>
-      <ul></ul>
-    </div>
-
   </div>
 
   <div class="dice-box"></div>
+
+  <div id="players-list"></div>
 
 </body>
 

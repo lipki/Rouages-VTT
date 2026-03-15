@@ -1,33 +1,25 @@
-import { DicePool } from "./DicePool.js";
-import { DrawerManager } from "./DrawerManager.js";
-import { PortraitManager } from "./PortraitManager.js";
-import { SkillManager } from "./SkillManager.js";
-import { StorageInputManager, StatsManager } from "./StorageInputManager.js";
+import { PlayerManager } from "./PlayerManager.js";
+import { Sheet } from "./Sheet.js";
 
 window.addEventListener("pageshow", () => new App());
 
 class App {
 
     constructor() {
-        const bus = new EventBus();
-        this.store = new DataStore(bus);
+        this.bus = new EventBus();
 
-        console.log(playerLocal);
+        new NetworkManager(this.bus, 'ws://localhost:8080');
 
-        this.dicePool = new DicePool(bus);
-        this.skillManager = new SkillManager(this.store, bus);
-        this.statsManager = new StatsManager(this.store, bus, "#stats-list");
+        this.bus.on("network:welcome", ws => this.wsConnected( ws ));
+    }
 
-        new PortraitManager(this.store);
-        new StorageInputManager(this.store, "#zone-identity input");
-        new StorageInputManager(this.store, "textarea");
-        new StorageInputManager(this.store, "#stats-grid input");
+    wsConnected(wsid) {
+        console.log("network:welcome", wsid);
 
-        new DrawerManager(this.store, "#zone-capa");
-        new DrawerManager(this.store, "#zone-contacts");
-
-        document.querySelector(".page-corner").addEventListener("click", 
-            () => document.querySelector(".sheet").classList.toggle("flipped"));
+        const PM = new PlayerManager(this.bus, wsid);
+        new Sheet(this.bus, PM);
+        new DataStore(this.bus, wsid);
+        
     }
 
 }
@@ -43,6 +35,7 @@ class EventBus {
     }
 
     emit(event, data = null) {
+        console.log("emit", event, data);
         (this.events[event] || []).forEach(cb => cb(data));
     }
 
@@ -50,36 +43,98 @@ class EventBus {
 
 class DataStore {
 
-    constructor(bus) {
+    constructor(bus, wsid) {
+        this.wsid = wsid;
+        bus.emit("player:new", {id:wsid, role:"player", sheet:this.getAll()});
+        bus.on("player:updated", playerData => this.setAll(playerData));
+
+        document.getElementById("clear").addEventListener("click", () => localStorage.clear());
+    }
+
+    getAll() {
+        try {
+            return JSON.parse(localStorage.getItem("rouageLocalPlayerv1.0") || "[]");
+        } catch {
+            return [];
+        }
+    }
+
+    setAll( playerData ) {
+        if( playerData.id == this.wsid ) localStorage.setItem("rouageLocalPlayerv1.0", JSON.stringify(playerData.sheet));
+    }
+
+}
+
+class NetworkManager {
+
+    constructor(bus, url) {
         this.bus = bus;
+        this.wsid = null;
+
+        this.ws = new WebSocket(url);
+
+        this.ws.addEventListener("open", () => console.log("WS connected"));
+        this.ws.addEventListener("message", e => this.receive(JSON.parse(e.data)));
+        this.ws.addEventListener("close", () => console.log("WS disconnected"));
+    }
+    
+    send(type, payload) {
+
+        if (this.ws.readyState !== WebSocket.OPEN) return;
+
+        const msg = { type, payload };
+
+        this.ws.send(JSON.stringify(msg));
+    }
+    
+    sendPlayer(playerData) {
+        if( !(playerData.id == this.wsid) ) return; // seul les données local sont envoyées
+        console.log("send : local player : ", playerData)
+        this.send("player:new", playerData);
+    }
+    
+    sendRoll(rollData) {
+        if( !(rollData.id == this.wsid) ) return; // seul les données local sont envoyées
+        console.log("send : roll dice : ", rollData)
+        this.send("roll:start", rollData);
     }
 
-    get(key) {
-        return localStorage.getItem(key);
-    }
+    receive(msg) {
 
-    set(key, value) {
+        switch (msg.type) {
 
-        console.log(key, value);
+            case "network:welcome":
+                console.log("receive : ", msg.type, "your id");
+                this.wsid = msg.id;
+                this.bus.on("player:ready", playerData => this.sendPlayer( playerData ));
+                this.bus.on("player:full", playerData => this.sendPlayer( playerData ));
+                this.bus.on("player:updated", playerData => this.sendPlayer( playerData ));
+                this.bus.on("roll:start", rollData => this.sendRoll(rollData));
+                this.bus.emit("network:welcome", msg.id);
+                break;
 
-        localStorage.setItem(key, value);
+            case "network:join":
+                console.log("receive : ", msg.type, "other WS connected");
+                this.bus.emit("network:request");
+                break;
 
-        this.bus.emit("data:changed", {
-            key,
-            value
-        });
+            case "network:leave":
+                console.log("receive : ", msg.type, "other WS disconnected");
+                this.bus.emit("player:remove", msg.id);
+                break;
 
-        // futur websocket
-        // this.ws.send(...)
-    }
+            case "player:new":
+                console.log("receive : ", msg.type, msg.payload)
+                this.bus.emit("player:new", msg.payload);
+                break;
 
-    remove(key) {
-        localStorage.removeItem(key);
+            case "roll:start":
+                this.bus.emit("roll:start", msg.payload);
+                break;
 
-        this.bus.emit("data:changed", {
-            key,
-            value:null
-        });
+            default:
+                console.warn("Unknown WS message", msg);
+        }
     }
 
 }

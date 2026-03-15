@@ -1,16 +1,12 @@
 export class PortraitManager {
 
-    constructor( store ) {
-        this.portrait = document.getElementById("zone-portrait");
-        this.avatar = document.getElementById("avatarimage");
-        this.store = store;
+    constructor(bus, playerID) {
+        this.image = document.querySelector("[data-action=identity_portrait]");
+        this.portrait = this.image.parentElement;
         this.MAX_SIZE = 1 * 1024 * 1024; // 1MB
+        this.bus = bus;
+        this.playerID = playerID;
 
-        this.avatar.src = this.store.get("attr_character_avatar");
-        this.init();
-    }
-
-    init() {
         this.portrait.addEventListener("dragover", this.dragover.bind(this));
         this.portrait.addEventListener("dragleave", this.dragleave.bind(this));
         this.portrait.addEventListener("drop", this.drop.bind(this));
@@ -44,14 +40,14 @@ export class PortraitManager {
         }
 
         const reader = new FileReader();
-        const avatar = this.avatar;
-        const store = this.store;
+        const image = this.image;
+        const bus = this.bus;
+        const playerID = this.playerID;
 
         reader.onload = function (event) {
             const base64 = event.target.result;
-
-            avatar.src = base64;
-            store.set("attr_character_avatar", base64);
+            image.src = base64;
+            bus.emit("sheet:change", { id: playerID, key: "identity_portrait", value: base64 });
         };
 
         reader.readAsDataURL(file);

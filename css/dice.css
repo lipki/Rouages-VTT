@@ -1,5 +1,6 @@
 .dice-box {
     padding: 1rem;
+    width: 4rem;
 
     .dice {
         display: flex;

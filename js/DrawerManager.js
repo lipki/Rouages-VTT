@@ -1,17 +1,16 @@
 export class DrawerManager {
 
-    constructor( store, containerSelector ) {
+    constructor( bus, playerID, containerSelector ) {
+        
+        const container = document.querySelector("[data-action="+containerSelector+"]");
+        
         this.selector = containerSelector;
-        this.container = document.querySelector(this.selector);
-        this.drawerContainer = document.querySelector(this.selector+" .drawers-container");
-        this.store = store;
-        this.load();
-        this.bindAddButton();
-    }
+        this.drawerContainer = document.querySelector("[data-action="+containerSelector+"] .drawers-container");
+        this.bus = bus;
+        this.playerID = playerID;
 
-    bindAddButton() {
-        const btn = this.container.querySelector(".add-drawer");
-        btn.addEventListener("click", () => this.addDrawer());
+        container.querySelector(".add-drawer").addEventListener("click", () => this.addDrawer());
+        container.addDrawer = (title, content, saved) => this.addDrawer(title, content, saved);
     }
 
     createDrawer(title = "Titre", content = "") {
@@ -50,7 +49,7 @@ export class DrawerManager {
         });
 
         // Supprimer
-        removeBtn.addEventListener("click", () => {
+        removeBtn.addEventListener("click", () => {addDrawer
             drawer.remove();
             this.save();
         });
@@ -62,10 +61,10 @@ export class DrawerManager {
         return drawer;
     }
 
-    addDrawer(title, content) {
+    addDrawer(title, content, saved = true) {
         const drawer = this.createDrawer(title, content);
         this.drawerContainer.insertBefore(drawer, this.drawerContainer.querySelector(".add-drawer"));
-        this.save();
+        if( saved ) this.save();
     }
 
     save() {
@@ -74,11 +73,6 @@ export class DrawerManager {
             const content = d.querySelector("textarea").value;
             return { title, content };
         });
-        this.store.set(this.selector, JSON.stringify(data));
-    }
-
-    load() {
-        const saved = JSON.parse(this.store.get(this.selector) || "[]");
-        saved.forEach(d => this.addDrawer(d.title, d.content));
+        this.bus.emit("sheet:change", { id: this.playerID, key: this.selector, value: data });
     }
 }

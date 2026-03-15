@@ -1,44 +1,48 @@
 export class DicePool {
 
-    constructor(bus) {
+    constructor(bus, playerManager) {
 
         this.bus = bus;
+        this.playerManager = playerManager;
         this.container = document.querySelector(".dice-box");
-        this.buttonAtout = document.getElementById("comp_atout");
-        this.buttonPenalite = document.getElementById("comp_penalite");
         this.atoutCounter = document.querySelector(".icon-box.atoutpenalite .atoutCounter");
         this.skillCounter = document.querySelector(".icon-box.atoutpenalite .skillCounter");
-        this.historical = document.querySelector(".historical ul");
-        this.buttonVigueur = document.querySelector(".icon-box.vigueur span");
         this.dice = [];
         this.atout = 0;
         this.skills = 0;
-        this.MAX_HISTORY = 40;
 
         this.bus.on("skills:changed", nb => this.updateSkills(nb));
 
-        this.bus.on("roll:start", data => this.roll(data));
-
-        this.buttonAtout.addEventListener("click", e => {
+        document.getElementById("comp_atout").addEventListener("click", e => {
             this.atout ++;
             this.updateAtoutLabel();
         });
 
-        this.buttonPenalite.addEventListener("click", e => {
+        document.getElementById("comp_penalite").addEventListener("click", e => {
             this.atout --;
             this.updateAtoutLabel();
         });
 
-        this.buttonVigueur.addEventListener("click", e => {
+        document.querySelector(".icon-box.vigueur span").addEventListener("click", e => {
             this.clear();
             this.add({className:"dice10", maxValue:10, color:"vigueur"});
-            this.addHistoryVigueur("Vigueur");
+
+            const sheet = this.playerManager.getLocal().sheet;
+            this.bus.emit("roll:start", {id: this.playerManager.playerLocalID ,label: "Vigueur", dice: this.dice, result:this.highest().value, sheet:sheet});
         });
+
+        document.querySelectorAll("#stats-list span").forEach(label => {
+            label.addEventListener("click", () => {
+                const input = label.parentNode.querySelector("input");
+                this.roll( label.innerText, input.value );
+            });
+        });
+
     }
 
-    roll(data) {
+    roll(stats, value) {
         this.clear();
-        this.add({className:"dice6", value:data.value});
+        this.add({className:"dice6", value:value});
         this.add({className:"dice10", maxValue:10});
 
         const penaltyDice = Math.max(0, -this.atout - this.skills);
@@ -59,7 +63,8 @@ export class DicePool {
 
         this.sortAtout();
 
-        this.addHistory(data.label);
+        const sheet = this.playerManager.getLocal().sheet;
+        this.bus.emit("roll:start", {id: this.playerManager.playerLocalID ,label: stats, dice: this.dice, result:this.resultAtout().value, sheet:sheet});
     }
 
     updateAtoutLabel() {
@@ -69,51 +74,6 @@ export class DicePool {
             this.atoutCounter.textContent = `${n} Pénalité${n>1?"s":""}`;
         else
             this.atoutCounter.textContent = `${n} Atout${n>1?"s":""}`;
-    }
-
-    addHistory(label) {
-
-        const result = this.resultAtout().value;
-        const txt = `${this.atout < 0 ? 'min' : 'max'}( ${this.values().join(", ")} ) = ${result} : ${this.getSuccess(result)}`;
-
-        const dt_carac = document.createElement('dt');
-        dt_carac.className = 'title';
-        dt_carac.textContent = label;
-
-        const dl_dice = document.createElement('dl');
-        dl_dice.className = 'dice';
-        dl_dice.textContent = txt;
-
-        this.historical.insertBefore(dl_dice, this.historical.firstChild);
-        this.historical.insertBefore(dt_carac, this.historical.firstChild);
-
-        while (this.historical.children.length > this.MAX_HISTORY)
-            this.historical.lastChild.remove();
-
-    }
-
-    addHistoryVigueur(label) {
-
-        const result = this.highest().value;
-
-        const dt_carac = document.createElement('dt');
-        dt_carac.className = 'title';
-        dt_carac.textContent = label + " : " + result;
-
-        this.historical.insertBefore(dt_carac, this.historical.firstChild);
-
-        while (this.historical.children.length > this.MAX_HISTORY)
-            this.historical.lastChild.remove();
-
-    }
-
-    getSuccess(value) {
-        if (value >= 10) return "Légendaire";
-        if (value >= 9) return "Improbable";
-        if (value >= 7) return "Difficile";
-        if (value >= 5) return "Facile";
-        if (value >= 3) return "Routine";
-        return "Echec";
     }
 
     updateSkills(nb) {
