@@ -8,8 +8,8 @@ class App {
     constructor() {
         this.bus = new EventBus();
 
-        new NetworkManager(this.bus, 'ws://localhost:8080');
-        //new NetworkManager(this.bus, 'https://rouages-vtt.onrender.com/');
+        //new NetworkManager(this.bus, 'ws://localhost:8080');
+        new NetworkManager(this.bus, 'https://rouages-vtt.onrender.com/');
 
         this.bus.on("network:connected", ws => this.wsConnected( ws ));
     }
