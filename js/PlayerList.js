@@ -28,7 +28,7 @@ export class PlayerList {
 
         const avatar = document.createElement("img");
         avatar.className = "avatar";
-        avatar.src = player.sheet.identity.portrait || "";
+        avatar.src = player.sheet.identity.portrait || "img/ghost.png";
 
         const name = document.createElement("span");
         name.className = "name";
@@ -44,7 +44,7 @@ export class PlayerList {
         pop.className = "player-card";
 
         pop.innerHTML = `
-            <img class="avatar" src="${player.sheet.identity.portrait || ""}">
+            <img class="avatar" src="${player.sheet.identity.portrait || "img/ghost.png"}">
             <h3>${player.sheet?.identity?.name || "Nom oublié"}</h3>
             <p>Âge : ${player.sheet?.identity?.age || "Hors du temps"}</p>
             <p>Peuple : ${player.sheet?.identity?.people || "Née du vent"}</p>

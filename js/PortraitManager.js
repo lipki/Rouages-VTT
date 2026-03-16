@@ -46,7 +46,7 @@ export class PortraitManager {
 
         reader.onload = function (event) {
             const base64 = event.target.result;
-            image.src = base64;
+            image.src = base64 || "img/ghost.png";
             bus.emit("sheet:change", { id: playerID, key: "identity_portrait", value: base64 });
         };
 

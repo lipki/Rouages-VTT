@@ -23,7 +23,7 @@ export class History {
         // avatar
         const avatar = document.createElement("img");
         avatar.className = "avatar";
-        avatar.src = this.playerManager.get(rollData.id).sheet.identity.portrait || "";
+        avatar.src = this.playerManager.get(rollData.id).sheet.identity.portrait || "img/ghost.png";
         el.appendChild(avatar);
 
         // stat
