@@ -28,7 +28,7 @@ export class DicePool {
             this.add({className:"dice10", maxValue:10, color:"vigueur"});
 
             const sheet = this.playerManager.getLocal().sheet;
-            this.bus.emit("roll:start", {id: this.playerManager.playerLocalID ,label: "Vigueur", dice: this.dice, result:this.highest().value, sheet:sheet});
+            this.bus.emit("dicepool:roll", {id: this.playerManager.playerLocalID ,label: "Vigueur", dice: this.dice, result:this.highest().value});
         });
 
         document.querySelectorAll("#stats-list span").forEach(label => {
@@ -64,7 +64,10 @@ export class DicePool {
         this.sortAtout();
 
         const sheet = this.playerManager.getLocal().sheet;
-        this.bus.emit("roll:start", {id: this.playerManager.playerLocalID ,label: stats, dice: this.dice, result:this.resultAtout().value, sheet:sheet});
+        this.bus.emit("dicepool:roll", {id: this.playerManager.playerLocalID ,label: stats, dice: this.dice, result:this.resultAtout().value});
+
+        this.atout = 0;
+        this.updateAtoutLabel();
     }
 
     updateAtoutLabel() {

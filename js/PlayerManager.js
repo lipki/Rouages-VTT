@@ -6,8 +6,14 @@ export class PlayerManager {
         this.players = new Map();
         this.playerLocalID = playerLocalID;
 
-        bus.on("player:new", playerData => this.addPlayer(playerData));
-        bus.on("player:remove", wsid => this.removePlayer(wsid));
+        /*bus.on("avatar:change", avatarChangeData => this.dispatchChangeToPlayer(avatarChangeData));*/
+
+        bus.on("datastore:initplayer", playerData => this.addPlayer(playerData));
+        bus.on("network:initplayer", playerData => this.addPlayer(playerData));
+        bus.on("network:requestfull", () => this.bus.emit("player:updated", this.getLocal()));
+        bus.on("network:playerremove", id => this.removePlayer(id));
+        bus.on("network:partialupdate", playerData => this.dispatchChangeToPlayer(playerData));
+
         bus.on("sheet:change", sheetChangeData => this.dispatchChangeToPlayer(sheetChangeData));
 
         this.playerListEl = document.getElementById("players-list");
@@ -18,10 +24,10 @@ export class PlayerManager {
 
         let player = null;
 
-        if( !this.players.get(playerData.id) ) {
+        if (!this.players.get(playerData.id)) {
             player = new Player(this.bus, playerData.sheet, playerData.id, playerData.role);
             this.players.set(player.id, player);
-            if( this.playerLocalID == player.id ) player.local = true;
+            if (this.playerLocalID == player.id) player.local = true;
         } else {
             player = this.players.get(playerData.id);
             player.updateData(playerData.sheet);
@@ -32,6 +38,7 @@ export class PlayerManager {
 
     removePlayer(id) {
         this.players.delete(id);
+        this.bus.emit("player:remove", id);
     }
 
     dispatchChangeToPlayer(sheetChangeData) {
@@ -76,10 +83,9 @@ class Player {
         this.id = id;
         this.role = role ?? "player";
         this.local = false;
+        this.sheet = null;
 
         if (sheet) this.updateData(sheet);
-
-        this.bus.on("network:request", () => this.bus.emit("player:full", {id:this.id, sheet:sheet}));
     }
 
     updateData(sheet_) {
@@ -163,19 +169,40 @@ class Player {
 
         sheet.notes = sheet_?.notes ?? "";
 
-        this.bus.emit("player:ready", {id:this.id, sheet:sheet});
+        this.bus.emit("player:updated", this);
     }
 
     partialUpdate(sheetChangeData) {
 
-        if( sheetChangeData.key == undefined ) return;
-        sheetChangeData.id = undefined;
-        const keys = sheetChangeData.key.split("_");
-        const last = keys.pop();
-        const target = keys.reduce((o, k) => o[k], this.sheet);
-        target[last] = sheetChangeData.value;
+        if (sheetChangeData.key == undefined && sheetChangeData.minisheet == undefined) return;
 
-        this.bus.emit("player:updated", {id:this.id, sheet:this.sheet});
+        let minisheet = sheetChangeData.minisheet ?? sheetChangeData.key.split("_").reverse().reduce((acc, part) => ({ [part]: acc }), sheetChangeData.value);
+        this.sheet = mergeDeep(this.sheet, minisheet);
+
+        this.bus.emit("player:partialupdate", { id: this.id, player: this, minisheet });
     }
 
+}
+
+function mergeDeep(...objects) {
+  const isObject = obj => obj && typeof obj === 'object';
+  
+  return objects.reduce((prev, obj) => {
+    Object.keys(obj).forEach(key => {
+      const pVal = prev[key];
+      const oVal = obj[key];
+      
+      if (Array.isArray(pVal) && Array.isArray(oVal)) {
+        prev[key] = pVal.concat(...oVal);
+      }
+      else if (isObject(pVal) && isObject(oVal)) {
+        prev[key] = mergeDeep(pVal, oVal);
+      }
+      else {
+        prev[key] = oVal;
+      }
+    });
+    
+    return prev;
+  }, {});
 }

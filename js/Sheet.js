@@ -12,9 +12,10 @@ export class Sheet {
         this.playerManager = playerManager;
         this.init = false;
         
-        new PlayerList(bus);
+        new PlayerList(bus, this.playerManager);
 
-        bus.on("player:ready", playerData => this.loadDatas( playerData ));
+        bus.on("player:updated", player => this.loadDatas( player));
+        bus.on("player:partialupdate", playerData => this.loadDatas( playerData.player));
 
         document.querySelector(".page-corner").addEventListener("click", 
             () => document.querySelector(".sheet").classList.toggle("flipped"));
@@ -24,30 +25,31 @@ export class Sheet {
 
     }
 
-    loadDatas(playerData) {
+    loadDatas(player) {
 
         if( this.init ) return ;
 
         this.init = true;
-        this.playerID = playerData.id;
+        this.playerID = player.id;
 
         new PortraitManager(this.bus, this.playerID);
         new SkillManager(this.bus, this.playerID);
         new DrawerManager(this.bus, this.playerID, "abilities");
         new DrawerManager(this.bus, this.playerID, "contacts");
         new DicePool(this.bus, this.playerManager);
-        new History(this.bus, 11);
+        new History(this.bus, this.playerManager, 11);
 
         /* Storage Input Manager */
         document.querySelectorAll("[data-action]").forEach(element => {
-            element.addEventListener("input", e => 
+            element.addEventListener("input", e => {
                 this.bus.emit("sheet:change", {id:this.playerID, key:e.target.dataset.action, value:e.target.value})
-            );
+                if( e.target.tagName == "INPUT") e.target.dataset.value = e.target.value;
+            });
         });
 
         /* load input */
 
-        for (const [key, value] of Object.entries(playerData.sheet)) {
+        for (const [key, value] of Object.entries(player.sheet)) {
             let selector = key;
 
             if( value.length || typeof value !== "object" )
@@ -64,7 +66,7 @@ export class Sheet {
         if( el && el.tagName == "BUTTON" ) value ? el.classList.add("active") : el.classList.remove("active");
         if( el && el.tagName == "DIV" ) value.forEach(d => el.addDrawer(d.title, d.content, false));
 
-        el.dataset.value = value;
+        if( el && el.tagName == "INPUT") el.dataset.value = value;
     }
 
 }

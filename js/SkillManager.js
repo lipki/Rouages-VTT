@@ -11,6 +11,8 @@ export class SkillManager {
 
         document.getElementById("skills-update").addEventListener("click", () => this.toggleUpdateMode());
         this.buttons.forEach(button => button.addEventListener("click", e => this.clickSkill(e.target)));
+
+        this.bus.on("dicepool:roll", () => this.buttons.forEach(b => b.classList.remove("selected")));
     }
 
     toggleUpdateMode() {

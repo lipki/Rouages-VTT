@@ -49,7 +49,7 @@ export class DrawerManager {
         });
 
         // Supprimer
-        removeBtn.addEventListener("click", () => {addDrawer
+        removeBtn.addEventListener("click", () => {
             drawer.remove();
             this.save();
         });

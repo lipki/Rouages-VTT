@@ -84,6 +84,7 @@
 
         background: linear-gradient(-45deg,
                 transparent 50%,
-                #00000020 50%);
+                #0000 50%,
+                #0000008a 100%);
     }
 }

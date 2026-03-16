@@ -9,10 +9,10 @@ wss.on('connection', (ws) => {
   clients.add(ws);
 
   console.log("Client connecté", ws.id);
-  ws.send(JSON.stringify({ type: "network:welcome", id:ws.id }));
+  ws.send(JSON.stringify({ type: "server:welcome", id:ws.id }));
 
   broadcast({
-    type: "network:join",
+    type: "server:newuser",
     id: ws.id
   }, ws);
 
@@ -40,7 +40,7 @@ wss.on('connection', (ws) => {
     console.log("Client déconnecté", ws.id);
 
     broadcast({
-      type: "network:leave",
+      type: "server:leave",
       id: ws.id
     });
 

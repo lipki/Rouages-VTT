@@ -29,7 +29,7 @@
 
             position-anchor: --player-anchor;
             position-area: top;
-            
+
             line-height: 0.4rem;
 
             background-image: var(--parchment);
@@ -50,6 +50,11 @@
                 animation: fadeIn .15s ease;
             }
         }
+
+        &.me .avatar {
+            box-shadow: 0 0 0.5rem 0 #d300ff;
+            background: #000;
+        }
     }
 
     .avatar {
@@ -66,10 +71,6 @@
         color: white;
         background: black;
         padding: 0.4rem;
-    }
-
-    &.me .avatar {
-        box-shadow: 0 0 0.5rem 0 #d300ff;
     }
 }
 

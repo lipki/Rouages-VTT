@@ -9,12 +9,13 @@ class App {
         this.bus = new EventBus();
 
         new NetworkManager(this.bus, 'ws://localhost:8080');
+        //new NetworkManager(this.bus, 'https://rouages-vtt.onrender.com/');
 
-        this.bus.on("network:welcome", ws => this.wsConnected( ws ));
+        this.bus.on("network:connected", ws => this.wsConnected( ws ));
     }
 
     wsConnected(wsid) {
-        console.log("network:welcome", wsid);
+        console.log("network:connected - id :", wsid);
 
         const PM = new PlayerManager(this.bus, wsid);
         new Sheet(this.bus, PM);
@@ -45,10 +46,13 @@ class DataStore {
 
     constructor(bus, wsid) {
         this.wsid = wsid;
-        bus.emit("player:new", {id:wsid, role:"player", sheet:this.getAll()});
-        bus.on("player:updated", playerData => this.setAll(playerData));
+        bus.emit("datastore:initplayer", {id:wsid, role:"player", sheet:this.getAll()});
+        bus.on("player:partialupdate", playerData => this.setAll(playerData.player));
 
-        document.getElementById("clear").addEventListener("click", () => localStorage.clear());
+        document.getElementById("clear").addEventListener("click", () => {
+            localStorage.clear();
+            location.reload();
+        });
     }
 
     getAll() {
@@ -59,8 +63,8 @@ class DataStore {
         }
     }
 
-    setAll( playerData ) {
-        if( playerData.id == this.wsid ) localStorage.setItem("rouageLocalPlayerv1.0", JSON.stringify(playerData.sheet));
+    setAll( player ) {
+        if( player.id == this.wsid ) localStorage.setItem("rouageLocalPlayerv1.0", JSON.stringify(player.sheet));
     }
 
 }
@@ -87,49 +91,79 @@ class NetworkManager {
         this.ws.send(JSON.stringify(msg));
     }
     
-    sendPlayer(playerData) {
+    sendPlayer(player) {
+        if( !(player.id == this.wsid) ) return; // seul les données local sont envoyées
+        const playerData = {id:player.id, sheet:player.sheet};
+        console.log("Présentation du joueur local : ", playerData)
+        this.send("network:userupdate", playerData);
+    }
+    
+    sendPartialPlayer(playerData) {
         if( !(playerData.id == this.wsid) ) return; // seul les données local sont envoyées
-        console.log("send : local player : ", playerData)
-        this.send("player:new", playerData);
+        playerData = {id:playerData.id, minisheet:playerData.minisheet};
+        console.log("Update partiel d'un joueur : ", playerData)
+        this.send("network:userpartialupdate", playerData);
     }
     
     sendRoll(rollData) {
         if( !(rollData.id == this.wsid) ) return; // seul les données local sont envoyées
         console.log("send : roll dice : ", rollData)
-        this.send("roll:start", rollData);
+        this.send("network:roll", rollData);
+    }
+    
+    sendImage(avatarData) {
+        if( !(avatarData.id == this.wsid) ) return; // seul les données local sont envoyées
+        console.log("send : avatar : ", avatarData)
+        this.send("avatar:change", avatarData);
     }
 
     receive(msg) {
 
         switch (msg.type) {
 
-            case "network:welcome":
-                console.log("receive : ", msg.type, "your id");
+            /*
+             La connexion est effective, Préparez vous, et présentez vous.
+            */
+            case "server:welcome":
+                console.log("receive :", msg.type, msg.id);
+                console.log("La connexion est effective, Préparez vous, et présentez vous.");
+
                 this.wsid = msg.id;
-                this.bus.on("player:ready", playerData => this.sendPlayer( playerData ));
-                this.bus.on("player:full", playerData => this.sendPlayer( playerData ));
-                this.bus.on("player:updated", playerData => this.sendPlayer( playerData ));
-                this.bus.on("roll:start", rollData => this.sendRoll(rollData));
-                this.bus.emit("network:welcome", msg.id);
+
+                this.bus.on("player:updated", player => this.sendPlayer( player ));
+                this.bus.on("player:partialupdate", playerData => this.sendPartialPlayer(playerData));
+                this.bus.on("dicepool:roll", rollData => this.sendRoll(rollData));
+
+                this.bus.emit("network:connected", msg.id);
+                
                 break;
 
-            case "network:join":
+            /*
+             Un nouvel utilisateur ces connecté le server vous demande de vous présenter.
+            */
+            case "server:newuser":
                 console.log("receive : ", msg.type, "other WS connected");
-                this.bus.emit("network:request");
+                console.log("Un nouvel utilisateur c'est connecté le server vous demande de vous présenter.");
+                this.bus.emit("network:requestfull");
                 break;
 
-            case "network:leave":
+            case "server:leave":
                 console.log("receive : ", msg.type, "other WS disconnected");
-                this.bus.emit("player:remove", msg.id);
+                console.log("Un utilisateur c'est deconnecté, il faut le suprimmer");
+                this.bus.emit("network:playerremove", msg.id);
                 break;
 
-            case "player:new":
+            case "network:userupdate":
                 console.log("receive : ", msg.type, msg.payload)
-                this.bus.emit("player:new", msg.payload);
+                this.bus.emit("network:initplayer", msg.payload);
                 break;
 
-            case "roll:start":
-                this.bus.emit("roll:start", msg.payload);
+            case "network:userpartialupdate":
+                this.bus.emit("network:partialupdate", msg.payload);
+                break;
+
+            case "network:roll":
+                this.bus.emit("network:roll", msg.payload);
                 break;
 
             default:

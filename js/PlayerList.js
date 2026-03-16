@@ -1,50 +1,54 @@
 export class PlayerList {
 
-    constructor(bus) {
+    constructor(bus, playerManager) {
 
         this.container = document.querySelector("#players-list");
-
+        this.playerManager = playerManager;
         this.players = new Map();
 
-        bus.on("player:new", playerData => this.addPlayer(playerData));
-        bus.on("player:updated", playerData => this.addPlayer(playerData));
-        bus.on("player:remove", wsid => this.removePlayer(wsid));
+
+        bus.on("player:updated", player => this.addPlayer(player));
+        bus.on("player:remove", id => this.removePlayer(id));
+        bus.on("player:partialupdate", playerData => this.addPlayer(playerData.player));
     }
 
-    addPlayer(playerData) {
+    addPlayer(player) {
 
-        if( this.players.get(playerData.id) ) this.removePlayer(playerData.id);
+        if( this.players.get(player.id) ) this.removePlayer(player.id);
 
         const wrapper = document.createElement("div");
         wrapper.className = "player";
+        wrapper.dataset.name = player.sheet?.identity?.name || "Sans nom";
+
+        if( this.playerManager.playerLocalID == player.id )
+            wrapper.classList.add("me");
 
         const button = document.createElement("button");
-        button.style.anchorName = `--player-${playerData.id}`;
+        button.style.anchorName = `--player-${player.id}`;
 
         const avatar = document.createElement("img");
         avatar.className = "avatar";
-        avatar.src = playerData.sheet.identity.portrait || "";
+        avatar.src = player.sheet.identity.portrait || "";
 
         const name = document.createElement("span");
         name.className = "name";
-        name.textContent = playerData.sheet.identity.name || "Sans nom";
-
+        name.textContent = player.sheet?.identity?.name || "Nom oublié";
 
         button.append(avatar, name);
 
         const pop = document.createElement("div");
-        pop.id = "player-"+playerData.id;
+        pop.id = "player-"+player.id;
         pop.setAttribute("popover","");
-        pop.style.positionAnchor = `--player-${playerData.id}`;
+        pop.style.positionAnchor = `--player-${player.id}`;
 
         pop.className = "player-card";
 
         pop.innerHTML = `
-            <img class="avatar" src="${playerData.sheet.identity.portrait || ""}">
-            <h3>${playerData.sheet.identity.name || ""}</h3>
-            <p>Âge : ${playerData.sheet.identity.age || ""}</p>
-            <p>Origine : ${playerData.sheet.identity.people || ""}</p>
-            <p>Métier : ${playerData.sheet.identity.occupation || ""}</p>
+            <img class="avatar" src="${player.sheet.identity.portrait || ""}">
+            <h3>${player.sheet?.identity?.name || "Nom oublié"}</h3>
+            <p>Âge : ${player.sheet?.identity?.age || "Hors du temps"}</p>
+            <p>Peuple : ${player.sheet?.identity?.people || "Née du vent"}</p>
+            <p>Métier : ${player.sheet?.identity?.occupation || "Tisseuse de rêves"}</p>
         `;
 
         wrapper.append(button, pop);
@@ -53,11 +57,11 @@ export class PlayerList {
         button.addEventListener("mouseenter", () => pop.showPopover());
         button.addEventListener("mouseleave", () => pop.hidePopover());
 
-        this.players.set(playerData.id, {wrapper, pop});
+        this.players.set(player.id, {wrapper, pop});
     }
 
     removePlayer(id) {
-        this.players.get(id).wrapper.remove();
+        this.players.get(id)?.wrapper.remove();
         this.players.delete(id);
     }
 }

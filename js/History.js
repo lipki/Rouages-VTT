@@ -1,17 +1,21 @@
 export class History {
 
-    constructor(bus, maxItems = 30) {
+    constructor(bus, playerManager, maxItems = 30) {
         this.container = document.querySelector("#history ul");
         this.maxItems = maxItems;
+        this.playerManager = playerManager;
 
         this.items = [];
 
-        bus.on("roll:start", data => this.addEntry(data));
+        bus.on("dicepool:roll", rollData => this.addEntry(rollData));
+        bus.on("network:roll", rollData => this.addEntry(rollData));
     }
 
     addEntry(rollData) {
         // data attendu : 
-        // { label, dice: [Dice], result, sheet }
+        // {id, label, dice: [Dice], result }
+
+        console.log(this.playerManager.get(rollData.id));
 
         const el = document.createElement("li");
         el.className = "dice-entry";
@@ -19,7 +23,7 @@ export class History {
         // avatar
         const avatar = document.createElement("img");
         avatar.className = "avatar";
-        avatar.src = rollData.sheet.identity.portrait || "";
+        avatar.src = this.playerManager.get(rollData.id).sheet.identity.portrait || "";
         el.appendChild(avatar);
 
         // stat
