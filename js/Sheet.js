@@ -1,55 +1,50 @@
 import { PortraitManager } from "./PortraitManager.js";
 import { SkillManager } from "./SkillManager.js";
 import { DrawerManager } from "./DrawerManager.js";
-import { DicePool } from "./DicePool.js";
-import { PlayerList } from "./PlayerList.js";
-import { History } from "./History.js";
 
 export class Sheet {
 
-    constructor (bus, playerManager) {
+    constructor (bus, player) {
         this.bus = bus;
-        this.playerManager = playerManager;
+        this.player = player;
         this.init = false;
-        
-        new PlayerList(bus, this.playerManager);
 
-        bus.on("player:updated", player => this.loadDatas( player));
-        bus.on("player:partialupdate", playerData => this.loadDatas( playerData.player));
+        const template = document.getElementById('sheet-template');
+        this.sheetEl = template.content.cloneNode(true).querySelector('.sheet-container');
+        this.sheetEl.id = "sheet-"+player.id;
+        document.getElementById('sheets-container').appendChild(this.sheetEl);
 
-        document.querySelector(".page-corner").addEventListener("click", 
-            () => document.querySelector(".sheet").classList.toggle("flipped"));
-        
-        document.querySelectorAll(".preload-hide").forEach(el => el.classList.toggle("preload-hide"));
-        document.getElementById("network-wait").style.display = "none";
+        this.sheetEl.querySelector(`.page-corner`)?.addEventListener("click", 
+            () => this.sheetEl.querySelector(`.sheet`).classList.toggle("flipped"));
+
+        this.sheetEl.querySelector(`.clear`).addEventListener("click", () => {
+            localStorage.clear();
+            location.reload();
+        });
 
     }
 
-    loadDatas(player) {
+    loadDatas() {
 
         if( this.init ) return ;
-
         this.init = true;
-        this.playerID = player.id;
 
-        new PortraitManager(this.bus, this.playerID);
-        new SkillManager(this.bus, this.playerID);
-        new DrawerManager(this.bus, this.playerID, "abilities");
-        new DrawerManager(this.bus, this.playerID, "contacts");
-        new DicePool(this.bus, this.playerManager);
-        new History(this.bus, this.playerManager, 11);
+        new PortraitManager(this.bus, this.player);
+        new SkillManager(this.bus, this.player);
+        new DrawerManager(this.bus, this.player, "abilities");
+        new DrawerManager(this.bus, this.player, "contacts");
 
         /* Storage Input Manager */
-        document.querySelectorAll("[data-action]").forEach(element => {
+        this.sheetEl.querySelectorAll(`[data-action]`).forEach(element => {
             element.addEventListener("input", e => {
-                this.bus.emit("sheet:change", {id:this.playerID, key:e.target.dataset.action, value:e.target.value})
+                this.player.partialUpdate(e.target.dataset.action, e.target.value);
                 if( e.target.tagName == "INPUT") e.target.dataset.value = e.target.value;
             });
         });
 
         /* load input */
 
-        for (const [key, value] of Object.entries(player.sheet)) {
+        for (const [key, value] of Object.entries(this.player.sheet)) {
             let selector = key;
 
             if( value.length || typeof value !== "object" )
@@ -60,9 +55,9 @@ export class Sheet {
     }
 
     loadData( selector, value ) {
-        const el = document.querySelector(`[data-action="${selector}"]`);
+        const el = this.sheetEl.querySelector(`[data-action="${selector}"]`);
         if( el ) el.value = value;
-        if( el && el.tagName == "IMG" ) el.src = value || "";
+        if( el && el.tagName == "IMG" ) el.src = value || "img/ghost.png";
         if( el && el.tagName == "BUTTON" ) value ? el.classList.add("active") : el.classList.remove("active");
         if( el && el.tagName == "DIV" ) value.forEach(d => el.addDrawer(d.title, d.content, false));
 

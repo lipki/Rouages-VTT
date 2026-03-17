@@ -1,4 +1,4 @@
-#zone-equipment textarea {
+.zone-equipment textarea {
   min-height: 18rem;
   width: calc(100% - 2rem);
 }

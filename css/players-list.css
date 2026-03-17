@@ -18,7 +18,7 @@
             anchor-name: --player-anchor;
         }
 
-        .player-card {
+        div {
             padding: .6rem;
             border: none;
 
@@ -39,7 +39,7 @@
 
             overflow: visible;
 
-            .avatar {
+            img {
                 width: 4rem;
                 aspect-ratio: 1;
                 object-fit: cover;
@@ -49,15 +49,21 @@
             &:popover-open {
                 animation: fadeIn .15s ease;
             }
+
+            span {
+                display: block;
+                background: transparent;
+                color: black;
+            }
         }
 
-        &.me .avatar {
+        &.me img {
             box-shadow: 0 0 0.5rem 0 #d300ff;
             background: #000;
         }
     }
 
-    .avatar {
+    img {
         width: 3rem;
         aspect-ratio: 1;
         object-fit: cover;
@@ -66,7 +72,7 @@
         box-shadow: 0 0 0.5rem 0 white;
     }
 
-    .name {
+    span {
         font-weight: bold;
         color: white;
         background: black;

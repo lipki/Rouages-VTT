@@ -4,37 +4,38 @@ export class DicePool {
 
         this.bus = bus;
         this.playerManager = playerManager;
-        this.container = document.querySelector(".dice-box");
-        this.atoutCounter = document.querySelector(".icon-box.atoutpenalite .atoutCounter");
-        this.skillCounter = document.querySelector(".icon-box.atoutpenalite .skillCounter");
+        this.container = document.querySelector(`.dice-box`);
+        const localEl = document.querySelector(`#sheet-${playerManager.playerLocalID}`);
+        this.atoutCounter = localEl.querySelector(`.icon-box.atoutpenalite .atoutCounter`);
+        this.skillCounter = localEl.querySelector(`.icon-box.atoutpenalite .skillCounter`);
         this.dice = [];
         this.atout = 0;
         this.skills = 0;
 
         this.bus.on("skills:changed", nb => this.updateSkills(nb));
 
-        document.getElementById("comp_atout").addEventListener("click", e => {
-            this.atout ++;
+        localEl.querySelector(`.comp_atout`)?.addEventListener("click", e => {
+            this.atout++;
             this.updateAtoutLabel();
         });
 
-        document.getElementById("comp_penalite").addEventListener("click", e => {
-            this.atout --;
+        localEl.querySelector(`.comp_penalite`)?.addEventListener("click", e => {
+            this.atout--;
             this.updateAtoutLabel();
         });
 
-        document.querySelector(".icon-box.vigueur span").addEventListener("click", e => {
+        localEl.querySelector(`.icon-box.vigueur span`)?.addEventListener("click", e => {
             this.clear();
-            this.add({className:"dice10", maxValue:10, color:"vigueur"});
+            this.add({ className: "dice10", maxValue: 10, color: "vigueur" });
 
             const sheet = this.playerManager.getLocal().sheet;
-            this.bus.emit("dicepool:roll", {id: this.playerManager.playerLocalID ,label: "Vigueur", dice: this.dice, result:this.highest().value});
+            this.bus.emit("dicepool:roll", { id: this.playerManager.playerLocalID, label: "Vigueur", dice: this.dice, result: this.highest().value });
         });
 
-        document.querySelectorAll("#stats-list span").forEach(label => {
+        localEl.querySelectorAll(`.stats-list span`)?.forEach(label => {
             label.addEventListener("click", () => {
                 const input = label.parentNode.querySelector("input");
-                this.roll( label.innerText, input.value );
+                this.roll(label.innerText, input.value);
             });
         });
 
@@ -42,29 +43,29 @@ export class DicePool {
 
     roll(stats, value) {
         this.clear();
-        this.add({className:"dice6", value:value});
-        this.add({className:"dice10", maxValue:10});
+        this.add({ className: "dice6", value: value });
+        this.add({ className: "dice10", maxValue: 10 });
 
         const penaltyDice = Math.max(0, -this.atout - this.skills);
         const bonusDice = Math.max(0, this.atout);
         const competenceDice = this.atout < 0 ? this.skills + this.atout : this.skills;
 
-        Array.from({length: competenceDice}).forEach(() =>
-            this.add({className:"dice10", maxValue:10, color:"competence"})
+        Array.from({ length: competenceDice }).forEach(() =>
+            this.add({ className: "dice10", maxValue: 10, color: "competence" })
         );
 
-        Array.from({length: penaltyDice}).forEach(() =>
-            this.add({className:"dice10", maxValue:10, color:"penalite"})
+        Array.from({ length: penaltyDice }).forEach(() =>
+            this.add({ className: "dice10", maxValue: 10, color: "penalite" })
         );
 
-        Array.from({length: bonusDice}).forEach(() =>
-            this.add({className:"dice10", maxValue:10, color:"atout"})
+        Array.from({ length: bonusDice }).forEach(() =>
+            this.add({ className: "dice10", maxValue: 10, color: "atout" })
         );
 
         this.sortAtout();
 
         const sheet = this.playerManager.getLocal().sheet;
-        this.bus.emit("dicepool:roll", {id: this.playerManager.playerLocalID ,label: stats, dice: this.dice, result:this.resultAtout().value});
+        this.bus.emit("dicepool:roll", { id: this.playerManager.playerLocalID, label: stats, dice: this.dice, result: this.resultAtout().value });
 
         this.atout = 0;
         this.updateAtoutLabel();
@@ -74,9 +75,9 @@ export class DicePool {
         const n = Math.abs(this.atout);
 
         if (this.atout < 0)
-            this.atoutCounter.textContent = `${n} Pénalité${n>1?"s":""}`;
+            this.atoutCounter.textContent = `${n} Pénalité${n > 1 ? "s" : ""}`;
         else
-            this.atoutCounter.textContent = `${n} Atout${n>1?"s":""}`;
+            this.atoutCounter.textContent = `${n} Atout${n > 1 ? "s" : ""}`;
     }
 
     updateSkills(nb) {
@@ -109,13 +110,13 @@ export class DicePool {
     sortDesc() {
         this.dice
             .sort((a, b) => b.value - a.value)
-            .forEach(d => this.container.appendChild(d.el));
+            .forEach(d => this.container.appendChild(d.diceEl));
     }
 
     sortAsc() {
         this.dice
             .sort((a, b) => a.value - b.value)
-            .forEach(d => this.container.appendChild(d.el));
+            .forEach(d => this.container.appendChild(d.diceEl));
     }
 
     sortAtout() {
@@ -129,23 +130,16 @@ class Dice {
 
     constructor(container, options) {
 
-        this.container = container;
-        this.className = options.className ?? "dice";
-        this.maxValue = options.maxValue ?? 6;
-        this.value = options.value ?? Math.ceil(Math.random() * this.maxValue);
-        this.color = options.color ?? null;
+        const template = document.getElementById('dice-template');
+        this.diceEl = template.content.cloneNode(true).querySelector('.dice');
+        this.value = Number(options.value ?? Math.ceil(Math.random() * options.maxValue ?? 6));
+        this.diceEl.querySelector('span').textContent = this.value;
 
-        this.el = document.createElement("div");
-        this.el.classList.add(this.className, "dice");
+        if (options.className) this.diceEl.classList.add(options.className);
+        if (options.color) this.diceEl.classList.add(options.color);
 
-        if (this.color) this.el.classList.add(this.color);
-
-        this.span = document.createElement('span');
-        this.span.textContent = this.value;
-        this.el.appendChild(this.span);
-
-        this.container.appendChild(this.el);
+        container.appendChild(this.diceEl);
     }
 
-    remove() { this.el.remove(); }
+    remove() { this.diceEl.remove(); }
 }

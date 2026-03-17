@@ -1,11 +1,11 @@
 export class PortraitManager {
 
-    constructor(bus, playerID) {
+    constructor(bus, player) {
         this.image = document.querySelector("[data-action=identity_portrait]");
         this.portrait = this.image.parentElement;
         this.MAX_SIZE = 1 * 1024 * 1024; // 1MB
         this.bus = bus;
-        this.playerID = playerID;
+        this.player = player;
 
         this.portrait.addEventListener("dragover", this.dragover.bind(this));
         this.portrait.addEventListener("dragleave", this.dragleave.bind(this));
@@ -42,12 +42,12 @@ export class PortraitManager {
         const reader = new FileReader();
         const image = this.image;
         const bus = this.bus;
-        const playerID = this.playerID;
+        const player = this.player;
 
         reader.onload = function (event) {
             const base64 = event.target.result;
             image.src = base64 || "img/ghost.png";
-            bus.emit("sheet:change", { id: playerID, key: "identity_portrait", value: base64 });
+            player.partialUpdate("identity_portrait", base64);
         };
 
         reader.readAsDataURL(file);

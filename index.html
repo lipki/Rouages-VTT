@@ -27,179 +27,236 @@
     <ul></ul>
   </div>
 
-  <div class="sheet-container preload-hide">
-    <button id="clear">Clear</button>
-
-    <div class="sheet">
-
-      <div class="sheet-front">
-
-        <header>
-          <h1>Rouages</h1>
-        </header>
-
-        <div id='zone-portrait'>
-          <img id="avatarimage" alt="" data-action='identity_portrait' src="img/ghost.png">
-          <div class='overlay' aria-hidden="true"></div>
-          <span>Dépose ton avatar</span>
-        </div>
-
-        <div id="zone-identity">
-          <div class="field">
-            <label><span>NOM</span></label>
-            <input type="text" maxlength="40" data-action="identity_name" />
-          </div>
-          <div class="field">
-            <label><span>AGE</span></label>
-            <input type="text" maxlength="40" data-action="identity_age" />
-          </div>
-          <div class="field">
-            <label><span>PEUPLE</span></label>
-            <input type="text" maxlength="40" data-action="identity_people" />
-          </div>
-          <div class="field">
-            <label><span>MÉTIER</span></label>
-            <input type="text" maxlength="40" data-action="identity_occupation" />
-          </div>
-        </div>
-
-        <div id="zone-stats">
-          <ul id="stats-list">
-            <li class="label">
-              <span>MUSCULATURE</span>
-              <input class="gear" type="text" maxlength="2" data-action="stats_mus" />
-            </li>
-            <li class="label">
-              <span>DEXTÉRITÉ</span>
-              <input class="gear" type="text" maxlength="2" data-action="stats_dex" />
-            </li>
-            <li class="label">
-              <span>PERCEPTION</span>
-              <input class="gear" type="text" maxlength="2" data-action="stats_per" />
-            </li>
-            <li class="label">
-              <span>ÉDUCATION</span>
-              <input class="gear" type="text" maxlength="2" data-action="stats_edu" />
-            </li>
-            <li class="label">
-              <span>INTUITION</span>
-              <input class="gear" type="text" maxlength="2" data-action="stats_int" />
-            </li>
-            <li class="label">
-              <span>VOLONTÉ</span>
-              <input class="gear" type="text" maxlength="2" data-action="stats_vol" />
-            </li>
-          </ul>
-
-          <div id="stats-grid">
-            <div class="icon-box vigueur">
-              <input type="text" maxlength="2" data-action="derivedStats_stamina" />
-              <span>VIGUEUR</span>
-            </div>
-            <div class="icon-box blessure">
-              <input type="text" maxlength="2" data-action="derivedStats_injuries" />
-              <span>BLESSURES</span>
-            </div>
-            <div class="icon-box armure">
-              <input type="text" maxlength="2" data-action="derivedStats_armor" />
-              <span>ARMURE</span>
-            </div>
-            <div class="icon-box lassitude">
-              <input type="text" maxlength="2" data-action="derivedStats_weakness" />
-              <span>LASSITUDE</span>
-            </div>
-            <div class="icon-box penetration">
-              <input type="text" maxlength="2" data-action="derivedStats_penetration" />
-              <span>PÉNÉTRATION</span>
-            </div>
-            <div class="icon-box pi">
-              <input type="text" maxlength="2" data-action="derivedStats_pi" />
-              <span>PI</span>
-            </div>
-            <div class="icon-box ingredient">
-              <input type="text" maxlength="2" data-action="derivedStats_ingredients" />
-              <span>INGRÉDIENTS</span>
-            </div>
-            <div class="icon-box atoutpenalite">
-              <button id="comp_atout">Atout</button>
-              <span class="atoutCounter">0 Atout</span>
-              <span class="skillCounter">0 Comp.</span>
-              <button id="comp_penalite">Penalité</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="notebook-container">
-          <div id="zone-capa" data-action="abilities">
-            <h3><span>CAPACITÉS</span><button class="add-drawer">➕</button></h3>
-            <div class="drawers-container"></div>
-          </div>
-          <div id="zone-comp">
-            <h3><span>COMPÉTENCES</span><button id="skills-update" type="button">🖋</button></h3>
-            <div id="skills-container">
-              <div class="skills-list">
-                <button data-icon="🛠" data-action="skills_tinkering">Bricolage</button>
-                <button data-icon="🗡" data-action="skills_brigandage">Brigandage</button>
-                <button data-icon="🕶" data-action="skills_stealth">Discrétion</button>
-                <button data-icon="⚟" data-action="skills_eloquence">Eloquence</button>
-                <button data-icon="🕸" data-action="skills_intrigue">Intrigues</button>
-                <button data-icon="🕮" data-action="skills_legends">Légendes</button>
-                <button data-icon="☤" data-action="skills_medicine">Médecine</button>
-                <button data-icon="☈" data-action="skills_mobility">Mobilité</button>
-                <button data-icon="☙" data-action="skills_nature">Nature</button>
-                <button data-icon="🏛" data-action="skills_politics">Politique</button>
-                <button data-icon="⚿" data-action="skills_psychology">Psychologie</button>
-                <button data-icon="🛡" data-action="skills_resistance">Résistance</button>
-                <button data-icon="⚛" data-action="skills_abstractSciences">Scien. Abstraites</button>
-                <button data-icon="⚔" data-action="skills_martialTraining">Entr. martiaux</button>
-              </div>
-              <div class="technique skills-list">
-                <h4>Disciplines techniques</h4>
-                <button data-icon="☘" data-action="techSkills_apothecary">Apothicairerie</button>
-                <button data-icon="⚗" data-action="techSkills_alchemy">Alchimie</button>
-                <button data-icon="🕱" data-action="techSkills_armormaking">Armurerie</button>
-                <button data-icon="⚙" data-action="techSkills_mechanics">Mécanique</button>
-                <button data-icon="🗲" data-action="techSkills_electricity">Electricité</button>
-                <button data-icon="☢" data-action="techSkills_explosives">Explosifs</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="notebook-container">
-          <div id="zone-equipment">
-            <h3><span>EQUIPEMENT</span></h3>
-            <textarea class="notebook" data-action="equipment"></textarea>
-          </div>
-          <div id="zone-contacts" data-action="contacts">
-            <h3><span>CONTACTS</span><button class="add-drawer">➕</button></h3>
-            <div class="drawers-container"></div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="sheet-back">
-
-        <header>
-          <h1>Rouages</h1>
-        </header>
-
-        <h2>Notes</h2>
-        <textarea class="notes" data-action="notes"></textarea>
-
-      </div>
-
-      <div class="page-corner"></div>
-
-    </div>
-
-  </div>
+  <div id="sheets-container"></div>
 
   <div class="dice-box"></div>
 
   <div id="players-list"></div>
-  
+
+
+
+
+
+  <template id="sheet-template">
+    <div class="sheet-container">
+      <button class="clear">Clear</button>
+
+      <div class="sheet">
+
+        <div class="sheet-front">
+
+          <header>
+            <h1>Rouages</h1>
+          </header>
+
+          <div id='zone-portrait'>
+            <img alt="" data-action='identity_portrait' src="img/ghost.png">
+            <div class='overlay' aria-hidden="true"></div>
+            <span>Dépose ton avatar</span>
+          </div>
+
+          <div class="zone-identity">
+            <div class="field">
+              <label><span>NOM</span></label>
+              <input type="text" maxlength="40" data-action="identity_name" />
+            </div>
+            <div class="field">
+              <label><span>AGE</span></label>
+              <input type="text" maxlength="40" data-action="identity_age" />
+            </div>
+            <div class="field">
+              <label><span>PEUPLE</span></label>
+              <input type="text" maxlength="40" data-action="identity_people" />
+            </div>
+            <div class="field">
+              <label><span>MÉTIER</span></label>
+              <input type="text" maxlength="40" data-action="identity_occupation" />
+            </div>
+          </div>
+
+          <div class="zone-stats">
+            <ul class="stats-list">
+              <li class="label">
+                <span>MUSCULATURE</span>
+                <input class="gear" type="text" maxlength="2" data-action="stats_mus" />
+              </li>
+              <li class="label">
+                <span>DEXTÉRITÉ</span>
+                <input class="gear" type="text" maxlength="2" data-action="stats_dex" />
+              </li>
+              <li class="label">
+                <span>PERCEPTION</span>
+                <input class="gear" type="text" maxlength="2" data-action="stats_per" />
+              </li>
+              <li class="label">
+                <span>ÉDUCATION</span>
+                <input class="gear" type="text" maxlength="2" data-action="stats_edu" />
+              </li>
+              <li class="label">
+                <span>INTUITION</span>
+                <input class="gear" type="text" maxlength="2" data-action="stats_int" />
+              </li>
+              <li class="label">
+                <span>VOLONTÉ</span>
+                <input class="gear" type="text" maxlength="2" data-action="stats_vol" />
+              </li>
+            </ul>
+
+            <div class="stats-grid">
+              <div class="icon-box vigueur">
+                <input type="text" maxlength="2" data-action="derivedStats_stamina" />
+                <span>VIGUEUR</span>
+              </div>
+              <div class="icon-box blessure">
+                <input type="text" maxlength="2" data-action="derivedStats_injuries" />
+                <span>BLESSURES</span>
+              </div>
+              <div class="icon-box armure">
+                <input type="text" maxlength="2" data-action="derivedStats_armor" />
+                <span>ARMURE</span>
+              </div>
+              <div class="icon-box lassitude">
+                <input type="text" maxlength="2" data-action="derivedStats_weakness" />
+                <span>LASSITUDE</span>
+              </div>
+              <div class="icon-box penetration">
+                <input type="text" maxlength="2" data-action="derivedStats_penetration" />
+                <span>PÉNÉTRATION</span>
+              </div>
+              <div class="icon-box pi">
+                <input type="text" maxlength="2" data-action="derivedStats_pi" />
+                <span>PI</span>
+              </div>
+              <div class="icon-box ingredient">
+                <input type="text" maxlength="2" data-action="derivedStats_ingredients" />
+                <span>INGRÉDIENTS</span>
+              </div>
+              <div class="icon-box atoutpenalite">
+                <button class="comp_atout">Atout</button>
+                <span class="atoutCounter">0 Atout</span>
+                <span class="skillCounter">0 Comp.</span>
+                <button class="comp_penalite">Penalité</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="notebook-container">
+            <div data-action="abilities">
+              <h3><span>CAPACITÉS</span><button class="add-drawer">➕</button></h3>
+              <div class="drawers-container"></div>
+            </div>
+            <div>
+              <h3><span>COMPÉTENCES</span><button class="skills-update" type="button">🖋</button></h3>
+              <div class="skills-container">
+                <div class="skills-list">
+                  <button data-icon="🛠" data-action="skills_tinkering">Bricolage</button>
+                  <button data-icon="🗡" data-action="skills_brigandage">Brigandage</button>
+                  <button data-icon="🕶" data-action="skills_stealth">Discrétion</button>
+                  <button data-icon="⚟" data-action="skills_eloquence">Eloquence</button>
+                  <button data-icon="🕸" data-action="skills_intrigue">Intrigues</button>
+                  <button data-icon="🕮" data-action="skills_legends">Légendes</button>
+                  <button data-icon="☤" data-action="skills_medicine">Médecine</button>
+                  <button data-icon="☈" data-action="skills_mobility">Mobilité</button>
+                  <button data-icon="☙" data-action="skills_nature">Nature</button>
+                  <button data-icon="🏛" data-action="skills_politics">Politique</button>
+                  <button data-icon="⚿" data-action="skills_psychology">Psychologie</button>
+                  <button data-icon="🛡" data-action="skills_resistance">Résistance</button>
+                  <button data-icon="⚛" data-action="skills_abstractSciences">Scien. Abstraites</button>
+                  <button data-icon="⚔" data-action="skills_martialTraining">Entr. martiaux</button>
+                </div>
+                <div class="technique skills-list">
+                  <h4>Disciplines techniques</h4>
+                  <button data-icon="☘" data-action="techSkills_apothecary">Apothicairerie</button>
+                  <button data-icon="⚗" data-action="techSkills_alchemy">Alchimie</button>
+                  <button data-icon="🕱" data-action="techSkills_armormaking">Armurerie</button>
+                  <button data-icon="⚙" data-action="techSkills_mechanics">Mécanique</button>
+                  <button data-icon="🗲" data-action="techSkills_electricity">Electricité</button>
+                  <button data-icon="☢" data-action="techSkills_explosives">Explosifs</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="notebook-container">
+            <div class="zone-equipment">
+              <h3><span>EQUIPEMENT</span></h3>
+              <textarea class="notebook" data-action="equipment"></textarea>
+            </div>
+            <div class="zone-contacts" data-action="contacts">
+              <h3><span>CONTACTS</span><button class="add-drawer">➕</button></h3>
+              <div class="drawers-container"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="sheet-back">
+
+          <header>
+            <h1>Rouages</h1>
+          </header>
+
+          <h2>Notes</h2>
+          <textarea class="notes" data-action="notes"></textarea>
+
+        </div>
+
+        <div class="page-corner"></div>
+
+      </div>
+
+    </div>
+  </template>
+
+  <template id="drawer-template">
+    <div class="drawer">
+      <div class="drawer-header">
+        <button class="rang"></button>
+        <input type="text">
+        <button class="close">✕</button>
+      </div>
+      <div class="drawer-content">
+        <textarea></textarea>
+      </div>
+    </div>
+  </template>
+
+  <template id="dice-template">
+    <div class="dice">
+      <span></span>
+    </div>
+  </template>
+
+  <template id="history-template">
+    <li class="dice-entry">
+      <img src="img/ghost.png">
+      <h1></h1>
+      <div></div>
+      <span></span>
+    </li>
+  </template>
+
+
+  <template id="playerslist-template">
+    <div class="player">
+      <button>
+        <img src="">
+        <span>1d</span>
+      </button>
+      <div popover>
+        <img src="">
+        <h3>1d</h3>
+        <span class="age"></span>
+        <span class="people"></span>
+        <span class="works"></span>
+      </div>
+    </div>
+  </template>
+
+
+
+
+
   <script src="js/app.js" type="module"></script>
 
 </body>

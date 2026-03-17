@@ -1,37 +1,44 @@
+import { Message } from "./Message.js";
+import { Sheet } from "./Sheet.js";
+
 export class PlayerManager {
 
-    constructor(bus, playerLocalID) {
+    constructor(bus, dataStore, wsid) {
 
-        this.bus = bus
+        this.bus = bus;
+        this.dataStore = dataStore;
         this.players = new Map();
-        this.playerLocalID = playerLocalID;
+        this.playerLocalID = wsid;
 
-        /*bus.on("avatar:change", avatarChangeData => this.dispatchChangeToPlayer(avatarChangeData));*/
+        this.playerLocal = this.addPlayer(Message.initPlayer(wsid, dataStore.getAll(), "player"));
+        bus.on("network:partialupdate", playerData => {
+            if (this.get(playerData.id) && playerData.id != wsid)
+                this.get(playerData?.id).partialNetUpdate(playerData);
+        });
 
-        bus.on("datastore:initplayer", playerData => this.addPlayer(playerData));
-        bus.on("network:initplayer", playerData => this.addPlayer(playerData));
+        bus.on("network:initplayer", playerData => this.addPlayer(Message.initPlayer(playerData.id, playerData.sheet, "player")));
         bus.on("network:requestfull", () => this.bus.emit("player:updated", this.getLocal()));
         bus.on("network:playerremove", id => this.removePlayer(id));
-        bus.on("network:partialupdate", playerData => this.dispatchChangeToPlayer(playerData));
-
-        bus.on("sheet:change", sheetChangeData => this.dispatchChangeToPlayer(sheetChangeData));
-
-        this.playerListEl = document.getElementById("players-list");
 
     }
 
-    addPlayer(playerData = null) {
+    addPlayer(initPlayer = null) {
 
         let player = null;
+        let payload = initPlayer.payload;
 
-        if (!this.players.get(playerData.id)) {
-            player = new Player(this.bus, playerData.sheet, playerData.id, playerData.role);
+        if (!this.players.get(payload.id)) {
+            player = new Player(this.bus, payload.sheet, payload.id, payload.role);
             this.players.set(player.id, player);
-            if (this.playerLocalID == player.id) player.local = true;
-        } else {
-            player = this.players.get(playerData.id);
-            player.updateData(playerData.sheet);
+            if (this.playerLocalID === player.id) {
+                player.local = true;
+                player.dataStore = this.dataStore;
+                player.dom = new Sheet(this.bus, player);
+            }
         }
+
+        player = this.players.get(payload.id);
+        player.updateData(payload.sheet);
 
         return player;
     }
@@ -39,11 +46,6 @@ export class PlayerManager {
     removePlayer(id) {
         this.players.delete(id);
         this.bus.emit("player:remove", id);
-    }
-
-    dispatchChangeToPlayer(sheetChangeData) {
-        if (this.get(sheetChangeData?.id))
-            this.get(sheetChangeData?.id).partialUpdate(sheetChangeData);
     }
 
     get(id) {
@@ -54,23 +56,11 @@ export class PlayerManager {
         return this.players.get(this.playerLocalID);
     }
 
-    /*
-
-    updateRoll(data) {
-        //const player = this.players.get(data.id)
-        //if(!player) return
-        //player.lastRoll = data
-    }
-
     getAll() {
         return [...this.players.values()];
     }
 
-    getGM() {
-        return this.getAll().find(p => p.role === "gm");
-    }
-
-    getPlayers() {
+    /*getPlayers() {
         return this.getAll().find(p => p.role === "player");
     }*/
 
@@ -83,9 +73,9 @@ class Player {
         this.id = id;
         this.role = role ?? "player";
         this.local = false;
-        this.sheet = null;
-
-        if (sheet) this.updateData(sheet);
+        this.dataStore = null;
+        this.sheet = sheet;
+        this.dom = null;
     }
 
     updateData(sheet_) {
@@ -169,14 +159,29 @@ class Player {
 
         sheet.notes = sheet_?.notes ?? "";
 
+        this.dom?.loadDatas();
         this.bus.emit("player:updated", this);
     }
 
-    partialUpdate(sheetChangeData) {
+    partialUpdate(key, value) {
 
-        if (sheetChangeData.key == undefined && sheetChangeData.minisheet == undefined) return;
+        if (key == undefined) return;
 
-        let minisheet = sheetChangeData.minisheet ?? sheetChangeData.key.split("_").reverse().reduce((acc, part) => ({ [part]: acc }), sheetChangeData.value);
+        let minisheet = key.split("_").reverse().reduce((acc, part) => ({ [part]: acc }), value);
+        this.sheet = mergeDeep(this.sheet, minisheet);
+
+        if(minisheet.abilities) this.sheet.abilities = minisheet.abilities;
+        if(minisheet.contacts) this.sheet.contacts = minisheet.contacts;
+
+        this.dataStore?.setAll(this.sheet);
+        this.bus.emit("player:partialupdate", { id: this.id, player: this, minisheet });
+    }
+
+    partialNetUpdate(playerData) {
+
+        if (playerData.key == undefined && playerData.minisheet == undefined) return;
+
+        let minisheet = playerData.minisheet ?? playerData.key.split("_").reverse().reduce((acc, part) => ({ [part]: acc }), playerData.value);
         this.sheet = mergeDeep(this.sheet, minisheet);
 
         this.bus.emit("player:partialupdate", { id: this.id, player: this, minisheet });
@@ -185,24 +190,24 @@ class Player {
 }
 
 function mergeDeep(...objects) {
-  const isObject = obj => obj && typeof obj === 'object';
-  
-  return objects.reduce((prev, obj) => {
-    Object.keys(obj).forEach(key => {
-      const pVal = prev[key];
-      const oVal = obj[key];
-      
-      if (Array.isArray(pVal) && Array.isArray(oVal)) {
-        prev[key] = pVal.concat(...oVal);
-      }
-      else if (isObject(pVal) && isObject(oVal)) {
-        prev[key] = mergeDeep(pVal, oVal);
-      }
-      else {
-        prev[key] = oVal;
-      }
-    });
-    
-    return prev;
-  }, {});
+    const isObject = obj => obj && typeof obj === 'object';
+
+    return objects.reduce((prev, obj) => {
+        Object.keys(obj).forEach(key => {
+            const pVal = prev[key];
+            const oVal = obj[key];
+
+            if (Array.isArray(pVal) && Array.isArray(oVal)) {
+                prev[key] = pVal.concat(...oVal);
+            }
+            else if (isObject(pVal) && isObject(oVal)) {
+                prev[key] = mergeDeep(pVal, oVal);
+            }
+            else {
+                prev[key] = oVal;
+            }
+        });
+
+        return prev;
+    }, {});
 }

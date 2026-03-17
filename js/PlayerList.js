@@ -6,62 +6,55 @@ export class PlayerList {
         this.playerManager = playerManager;
         this.players = new Map();
 
-
         bus.on("player:updated", player => this.addPlayer(player));
         bus.on("player:remove", id => this.removePlayer(id));
         bus.on("player:partialupdate", playerData => this.addPlayer(playerData.player));
+
+        playerManager.getAll().forEach(player => this.addPlayer(player));
     }
 
     addPlayer(player) {
 
         if( this.players.get(player.id) ) this.removePlayer(player.id);
 
-        const wrapper = document.createElement("div");
-        wrapper.className = "player";
-        wrapper.dataset.name = player.sheet?.identity?.name || "Sans nom";
+        const template = document.getElementById('playerslist-template');
+        const playerEl = template.content.cloneNode(true).querySelector('.player');
+        const button = playerEl.querySelector("button");
+        const avatar = button.querySelector("img");
+        const name = button.querySelector("span");
+        const pop = playerEl.querySelector("div");
+        const popAvatar = pop.querySelector("img");
+        const popName = pop.querySelector("h3");
+        const popAge = pop.querySelector(".age");
+        const popPeople = pop.querySelector(".people");
+        const popWorks = pop.querySelector(".works");
+
 
         if( this.playerManager.playerLocalID == player.id )
-            wrapper.classList.add("me");
+            playerEl.classList.add("me");
 
-        const button = document.createElement("button");
-        button.style.anchorName = `--player-${player.id}`;
+        playerEl.dataset.name = name.textContent = popName.textContent = player.sheet?.identity?.name || "Nom oublié";
 
-        const avatar = document.createElement("img");
-        avatar.className = "avatar";
-        avatar.src = player.sheet.identity.portrait || "img/ghost.png";
-
-        const name = document.createElement("span");
-        name.className = "name";
-        name.textContent = player.sheet?.identity?.name || "Nom oublié";
-
-        button.append(avatar, name);
-
-        const pop = document.createElement("div");
         pop.id = "player-"+player.id;
-        pop.setAttribute("popover","");
-        pop.style.positionAnchor = `--player-${player.id}`;
+        button.style.anchorName = pop.style.positionAnchor = `--player-${player.id}`;
 
-        pop.className = "player-card";
+        avatar.src = popAvatar.src = player.sheet.identity.portrait || "img/ghost.png";
 
-        pop.innerHTML = `
-            <img class="avatar" src="${player.sheet.identity.portrait || "img/ghost.png"}">
-            <h3>${player.sheet?.identity?.name || "Nom oublié"}</h3>
-            <p>Âge : ${player.sheet?.identity?.age || "Hors du temps"}</p>
-            <p>Peuple : ${player.sheet?.identity?.people || "Née du vent"}</p>
-            <p>Métier : ${player.sheet?.identity?.occupation || "Tisseuse de rêves"}</p>
-        `;
+        popAge.textContent = "Âge : " + (player.sheet?.identity?.age || "Hors du temps");
+        popPeople.textContent = "Peuple : " + (player.sheet?.identity?.people || "Née du vent");
+        popWorks.textContent = "Métier : " + (player.sheet?.identity?.occupation || "Tisseuse de rêves");
 
-        wrapper.append(button, pop);
-        this.container.appendChild(wrapper);
+
+        this.container.appendChild(playerEl);
 
         button.addEventListener("mouseenter", () => pop.showPopover());
         button.addEventListener("mouseleave", () => pop.hidePopover());
 
-        this.players.set(player.id, {wrapper, pop});
+        this.players.set(player.id, {playerEl, pop});
     }
 
     removePlayer(id) {
-        this.players.get(id)?.wrapper.remove();
+        this.players.get(id)?.playerEl.remove();
         this.players.delete(id);
     }
 }

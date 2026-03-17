@@ -1,4 +1,4 @@
-#skills-container {
+.skills-container {
     .skills-list {
         display: flex;
         flex-direction: column;
@@ -87,7 +87,7 @@
     }
 }
 
-#skills-update {
+.skills-update {
     position: absolute;
     right: 1rem;
     top: 1.3rem;

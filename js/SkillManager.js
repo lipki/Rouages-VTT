@@ -1,15 +1,16 @@
 export class SkillManager {
 
-    constructor( bus, playerID ) {
-        this.buttons = document.querySelectorAll(".skills-list button");
-        this.container = document.getElementById("skills-container");
-        this.title = document.querySelector(".technique h4");
+    constructor( bus, player ) {
+        const localEl = document.querySelector(`#sheet-${player.id}`);
+        this.buttons = localEl.querySelectorAll(`.skills-list button`);
+        this.container = localEl.querySelector(`.skills-container`);
+        this.title = localEl.querySelector(`.technique h4`);
         this.bus = bus;
-        this.playerID = playerID;
+        this.player = player;
 
         this.isUpdateMode = false;
 
-        document.getElementById("skills-update").addEventListener("click", () => this.toggleUpdateMode());
+        localEl.querySelector(`.skills-update`).addEventListener("click", () => this.toggleUpdateMode());
         this.buttons.forEach(button => button.addEventListener("click", e => this.clickSkill(e.target)));
 
         this.bus.on("dicepool:roll", () => this.buttons.forEach(b => b.classList.remove("selected")));
@@ -34,9 +35,9 @@ export class SkillManager {
     updateSkill(button) {
         button.classList.toggle("active");
         if (!button.classList.contains("active"))
-            this.bus.emit("sheet:change", { id: this.playerID, key: button.dataset.action, value: false });
+            this.player.partialUpdate(button.dataset.action, false);
         else
-            this.bus.emit("sheet:change", { id: this.playerID, key: button.dataset.action, value: true });
+            this.player.partialUpdate(button.dataset.action, true);
     }
 
     selectSkill(button) {

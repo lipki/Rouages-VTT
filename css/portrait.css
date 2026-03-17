@@ -11,7 +11,7 @@
         display: none;
     }
 
-    #avatarimage {
+    img {
         mask-image:
             radial-gradient(ellipse 36.6% 43.2% at 50.2% 47%,
                 white 99%,

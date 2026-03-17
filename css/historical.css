@@ -51,7 +51,7 @@
         padding: 0.4rem;
         border-bottom: 1px solid #ccc;
 
-        .avatar {
+        img {
             width: 3rem;
             aspect-ratio: 1;
             object-fit: cover;
@@ -62,11 +62,13 @@
             right: 1rem;
         }
 
-        .title {
+        h1 {
             font-weight: bold;
+            margin: 0;
+            font-size: 1rem;
         }
 
-        .dice-list {
+        div {
             display: flex;
             gap: 0.2rem;
         }
@@ -94,7 +96,7 @@
             }
         }
 
-        .result {
+        span {
             font-style: italic;
         }
 

@@ -190,7 +190,7 @@ header {
 }
 
 /* other */
-#clear {
+.clear {
   position: absolute;
   top: 0;
   left: -5rem;

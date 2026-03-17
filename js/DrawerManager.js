@@ -1,51 +1,39 @@
 export class DrawerManager {
 
-    constructor( bus, playerID, containerSelector ) {
+    constructor( bus, player, containerSelector ) {
         
-        const container = document.querySelector("[data-action="+containerSelector+"]");
+        const container = document.querySelector(`#sheet-${player.id} [data-action="${containerSelector}"]`);
         
         this.selector = containerSelector;
-        this.drawerContainer = document.querySelector("[data-action="+containerSelector+"] .drawers-container");
+        this.drawerContainer = document.querySelector(`#sheet-${player.id} [data-action="${containerSelector}"] .drawers-container`);
         this.bus = bus;
-        this.playerID = playerID;
+        this.player = player;
 
         container.querySelector(".add-drawer").addEventListener("click", () => this.addDrawer());
         container.addDrawer = (title, content, saved) => this.addDrawer(title, content, saved);
     }
 
     createDrawer(title = "Titre", content = "") {
-        const drawer = document.createElement("div");
-        drawer.className = "drawer";
 
-        const header = document.createElement("div");
-        header.className = "drawer-header";
+        const template = document.getElementById('drawer-template');
+        const drawer = template.content.cloneNode(true).querySelector('.drawer');
+        const header = drawer.querySelector(".drawer-header");
+        const rang = header.querySelector(".rang");
+        const inputTitle = header.querySelector("input");
+        const removeBtn = header.querySelector(".close");
+        const contentDiv = drawer.querySelector(".drawer-content");
+        const textarea = contentDiv.querySelector("textarea");
 
-        const inputTitle = document.createElement("input");
-        inputTitle.type = "text";
+        rang.textContent = "𑙠"; // 𑙠𑙢𑙣
         inputTitle.value = title;
-
-        const removeBtn = document.createElement("button");
-        removeBtn.textContent = "✕";
-        removeBtn.style.marginLeft = "0.5rem";
-
-        header.appendChild(inputTitle);
-        header.appendChild(removeBtn);
-
-        const contentDiv = document.createElement("div");
-        contentDiv.className = "drawer-content";
-
-        const textarea = document.createElement("textarea");
         textarea.value = content;
-        contentDiv.appendChild(textarea);
 
-        drawer.appendChild(header);
-        drawer.appendChild(contentDiv);
+        document.getElementById('sheets-container').appendChild(drawer);
 
         // Toggle ouverture
         header.addEventListener("click", e => {
-            if (e.target !== removeBtn) {
-                contentDiv.style.display = contentDiv.style.display === "block" ? "none" : "block";
-            }
+            if (e.target !== removeBtn)
+                contentDiv.style.display = ( contentDiv.style.display === "block" ) ? "none" : "block";
         });
 
         // Supprimer
@@ -73,6 +61,6 @@ export class DrawerManager {
             const content = d.querySelector("textarea").value;
             return { title, content };
         });
-        this.bus.emit("sheet:change", { id: this.playerID, key: this.selector, value: data });
+        this.player.partialUpdate(this.selector, data);
     }
 }

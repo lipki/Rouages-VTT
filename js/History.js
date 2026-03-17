@@ -15,45 +15,29 @@ export class History {
         // data attendu : 
         // {id, label, dice: [Dice], result }
 
-        console.log(this.playerManager.get(rollData.id));
+        console.log(rollData);
 
-        const el = document.createElement("li");
-        el.className = "dice-entry";
+        const template = document.getElementById('history-template');
+        const entryEl = template.content.cloneNode(true).querySelector('.dice-entry');
+        const avatar = entryEl.querySelector("img");
+        const title = entryEl.querySelector("h1");
+        const diceContainer = entryEl.querySelector("div");
+        const result = entryEl.querySelector("span");
 
-        // avatar
-        const avatar = document.createElement("img");
-        avatar.className = "avatar";
         avatar.src = this.playerManager.get(rollData.id).sheet.identity.portrait || "img/ghost.png";
-        el.appendChild(avatar);
-
-        // stat
-        const title = document.createElement("div");
-        title.className = "title";
         title.textContent = ` → ${rollData.label}`;
-        el.appendChild(title);
-
-        // dés
-        const diceContainer = document.createElement("div");
-        diceContainer.className = "dice-list";
-        rollData.dice.forEach(d => {
+        rollData.dice.forEach(diceEl => {
             const dEl = document.createElement("span");
-            dEl.className = `dice ${d.color ?? ""} ${d.className ?? ""}`;
-            dEl.textContent = d.value;
+            dEl.className = `dice ${diceEl.color ?? ""} ${diceEl.className ?? ""}`;
+            dEl.textContent = diceEl.value;
             diceContainer.appendChild(dEl);
         });
-        el.appendChild(diceContainer);
 
-        if( rollData.label !== "Vigueur" ) {
-            // résultat
-            const result = document.createElement("div");
-            result.className = "result";
+        if( rollData.label !== "Vigueur" )
             result.textContent = `Résultat : ${rollData.result} → ${this.getSuccess(rollData.result)}`;
-            el.appendChild(result);
-        }
 
-        // ajoute en haut
-        this.container.insertBefore(el, this.container.firstChild);
-        this.items.unshift(el);
+        this.container.insertBefore(entryEl, this.container.firstChild);
+        this.items.unshift(entryEl);
 
         // limite la taille
         if (this.items.length > this.maxItems) {

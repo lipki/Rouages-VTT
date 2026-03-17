@@ -1,4 +1,4 @@
-#zone-stats {
+.zone-stats {
     height: 14rem;
     overflow: hidden;
     display: grid;
@@ -10,7 +10,7 @@
     background-position: 40% 0;
     background-size: contain;
 
-    #stats-list {
+    .stats-list {
         list-style: none;
         margin: 0;
         padding: 1rem 0;
@@ -83,7 +83,7 @@
 }
 
 
-#stats-grid {
+.stats-grid {
     display: grid;
     text-align: center;
     font-family: var(--font-title);
