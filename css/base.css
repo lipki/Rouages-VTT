@@ -31,11 +31,19 @@ body {
     padding: 1rem;
     font-size: 15px;
     font-family: var(--font-title);
+
+    *:disabled {
+        color: black;
+    }
+
+    .preload-hide {
+        display: none;
+    }
+
+    
 }
 
-.preload-hide {
-    display:none;
-}
+
 
 textarea {
     --interline: 1rem;
@@ -93,13 +101,14 @@ textarea {
             display: none;
 
             textarea {
-                width: 100% !important;
+                width: calc(100% - 1rem) !important;
                 min-height: 4rem;
                 font-family: var(--font-hand);
                 font-size: 1rem;
                 border: 0;
-                background: #0000000d;
-                box-shadow: 0 0 1rem 0 #00000017;
+                background: #00000036;
+                box-shadow: 0 0 0.5rem 0.25rem #0000003d;
+                border-radius: 0.5rem;
             }
         }
 
@@ -191,7 +200,19 @@ header {
 
 /* other */
 .clear {
-  position: absolute;
-  top: 0;
-  left: -5rem;
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 10;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+body.GM {
+    gap: 1rem;
+
+    .GMhide {
+        display: none;
+    }
 }

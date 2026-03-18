@@ -1,8 +1,9 @@
 export class NetworkManager {
 
-    constructor(bus, url) {
+    constructor(bus, GM, url) {
         this.bus = bus;
         this.wsid = null;
+        this.GM = GM;
 
         this.ws = new WebSocket(url);
 
@@ -22,20 +23,20 @@ export class NetworkManager {
 
     sendPlayer(player) {
         if (!(player.id == this.wsid)) return; // seul les données local sont envoyées
-        const playerData = { id: player.id, sheet: player.sheet };
-        console.log("Présentation du joueur local : ", playerData)
+        const playerData = { id: player.id, sheet: player.sheet, role: player.role };
+        console.log("Présentation du joueur local : ", playerData);
         this.send("network:userupdate", playerData);
     }
 
     sendPartialPlayer(playerData) {
         if (!(playerData.id == this.wsid)) return; // seul les données local sont envoyées
-        playerData = { id: playerData.id, minisheet: playerData.minisheet };
-        console.log("Update partiel d'un joueur : ", playerData)
+        playerData = { id: playerData.id, minisheet: playerData.minisheet, key: playerData.key, value: playerData.value };
+        console.log("Update partiel d'un joueur : ", playerData);
         this.send("network:userpartialupdate", playerData);
     }
 
     sendRoll(rollData) {
-        if (!(rollData.id == this.wsid)) return; // seul les données local sont envoyées
+        //if (!(rollData.id == this.wsid)) return; // seul les données local sont envoyées
         console.log("send : roll dice : ", rollData)
         this.send("network:roll", rollData);
     }

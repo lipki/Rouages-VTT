@@ -35,11 +35,34 @@
 
 
 
+  <template id="sheetGM-template">
+    <div class="sheet-container">
+      <button class="clear">🗑︎</button>
 
+      <div class="sheet">
+
+        <div class="sheet-front">
+
+          <div id='zone-portrait'>
+            <img alt="" data-action='identity_portrait' src="img/ghost.png">
+            <div class='overlay' aria-hidden="true"></div>
+            <span>Dépose ton avatar</span>
+          </div>
+
+          <div class="zone-identity">
+            <div class="field">
+              <label><span>NOM</span></label>
+              <input type="text" maxlength="40" data-action="identity_name" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
 
   <template id="sheet-template">
     <div class="sheet-container">
-      <button class="clear">Clear</button>
+      <button class="clear">🗑︎</button>
 
       <div class="sheet">
 
@@ -142,11 +165,11 @@
 
           <div class="notebook-container">
             <div data-action="abilities">
-              <h3><span>CAPACITÉS</span><button class="add-drawer">➕</button></h3>
+              <h3><span>CAPACITÉS</span><button class="add-drawer GMhide">➕</button></h3>
               <div class="drawers-container"></div>
             </div>
             <div>
-              <h3><span>COMPÉTENCES</span><button class="skills-update" type="button">🖋</button></h3>
+              <h3><span>COMPÉTENCES</span><button class="skills-update GMhide" type="button">🖋</button></h3>
               <div class="skills-container">
                 <div class="skills-list">
                   <button data-icon="🛠" data-action="skills_tinkering">Bricolage</button>
@@ -183,7 +206,7 @@
               <textarea class="notebook" data-action="equipment"></textarea>
             </div>
             <div class="zone-contacts" data-action="contacts">
-              <h3><span>CONTACTS</span><button class="add-drawer">➕</button></h3>
+              <h3><span>CONTACTS</span><button class="add-drawer GMhide">➕</button></h3>
               <div class="drawers-container"></div>
             </div>
           </div>
@@ -213,7 +236,7 @@
       <div class="drawer-header">
         <button class="rang"></button>
         <input type="text">
-        <button class="close">✕</button>
+        <button class="close GMhide">✕</button>
       </div>
       <div class="drawer-content">
         <textarea></textarea>
@@ -229,7 +252,7 @@
 
   <template id="history-template">
     <li class="dice-entry">
-      <img src="img/ghost.png">
+      <img data-action='identity_portrait' src="img/ghost.png">
       <h1></h1>
       <div></div>
       <span></span>
@@ -240,19 +263,18 @@
   <template id="playerslist-template">
     <div class="player">
       <button>
-        <img src="">
-        <span>1d</span>
+        <img data-action='identity_portrait' src="">
+        <span data-action="identity_name"></span>
       </button>
       <div popover>
-        <img src="">
-        <h3>1d</h3>
-        <span class="age"></span>
-        <span class="people"></span>
-        <span class="works"></span>
+        <img data-action='identity_portrait' src="">
+        <h3 data-action="identity_name"></h3>
+        <p>Âge : <span data-action="identity_age" class="age"></span></p>
+        <p>Peuple : <span data-action="identity_people" class="people"></span></p>
+        <p>Métier : <span data-action="identity_occupation" class="works"></span></p>
       </div>
     </div>
   </template>
-
 
 
 

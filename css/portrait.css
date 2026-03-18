@@ -60,3 +60,9 @@
     }
 
 }
+
+.GM .GM #zone-portrait {
+  position: relative;
+  margin: auto;
+  right: auto;
+}

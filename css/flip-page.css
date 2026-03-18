@@ -35,9 +35,8 @@
             }
 
             .page-corner {
-                left: auto;
-                right: 0;
-                transform: rotate(90deg);
+                left: 0;
+                transform: rotate(-90deg);
             }
         }
     }
@@ -78,13 +77,28 @@
         position: absolute;
         width: 4rem;
         height: 4rem;
-        left: 0;
+        right: 0;
         top: 0;
         cursor: pointer;
 
-        background: linear-gradient(-45deg,
+        background: linear-gradient(45deg,
                 transparent 50%,
                 #0000 50%,
                 #0000008a 100%);
+    }
+
+    &.hide {
+        display: none;
+    }
+}
+
+.GM {
+    .sheet-container.GM {
+        min-width: 16rem;
+
+        .sheet-front {
+            min-height: 10rem;
+            overflow: visible;
+        }
     }
 }

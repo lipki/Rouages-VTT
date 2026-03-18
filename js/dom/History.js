@@ -15,8 +15,6 @@ export class History {
         // data attendu : 
         // {id, label, dice: [Dice], result }
 
-        console.log(rollData);
-
         const template = document.getElementById('history-template');
         const entryEl = template.content.cloneNode(true).querySelector('.dice-entry');
         const avatar = entryEl.querySelector("img");
@@ -26,10 +24,11 @@ export class History {
 
         avatar.src = this.playerManager.get(rollData.id).sheet.identity.portrait || "img/ghost.png";
         title.textContent = ` → ${rollData.label}`;
-        rollData.dice.forEach(diceEl => {
+
+        rollData.dice.forEach(data => {
             const dEl = document.createElement("span");
-            dEl.className = `dice ${diceEl.color ?? ""} ${diceEl.className ?? ""}`;
-            dEl.textContent = diceEl.value;
+            dEl.className = `dice ${data.color ?? ""} ${data.className ?? ""}`;
+            dEl.textContent = data.dice.value;
             diceContainer.appendChild(dEl);
         });
 

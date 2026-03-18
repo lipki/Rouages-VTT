@@ -42,3 +42,9 @@
         }
     }
 }
+
+.GM .dice-box {
+  position: relative;
+  left: auto;
+  padding: 1rem 0;
+}

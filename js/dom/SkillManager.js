@@ -41,6 +41,7 @@ export class SkillManager {
     }
 
     selectSkill(button) {
+
         if (!button.classList.contains("active")) return;
         button.classList.toggle("selected");
         const selected = this.getSelected();

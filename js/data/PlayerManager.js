@@ -1,44 +1,52 @@
-import { Message } from "./Message.js";
-import { Sheet } from "./Sheet.js";
+import { Message as M } from "./Message.js";
+import { SheetManager } from "../dom/SheetManager.js";
 
 export class PlayerManager {
 
-    constructor(bus, dataStore, wsid) {
+    constructor(bus, dataStore, wsid, GM) {
 
         this.bus = bus;
         this.dataStore = dataStore;
+        this.SheetManager = new SheetManager(bus, GM);
         this.players = new Map();
-        this.playerLocalID = wsid;
-
-        this.playerLocal = this.addPlayer(Message.initPlayer(wsid, dataStore.getAll(), "player"));
+        
+        
         bus.on("network:partialupdate", playerData => {
             if (this.get(playerData.id) && playerData.id != wsid)
                 this.get(playerData?.id).partialNetUpdate(playerData);
         });
 
-        bus.on("network:initplayer", playerData => this.addPlayer(Message.initPlayer(playerData.id, playerData.sheet, "player")));
+        bus.on("network:initplayer", playerData => this.checkPlayer(M.initPlayer(playerData.id, playerData.sheet, playerData.role)));
         bus.on("network:requestfull", () => this.bus.emit("player:updated", this.getLocal()));
         bus.on("network:playerremove", id => this.removePlayer(id));
 
+
+        this.playerLocalID = wsid;
+        this.checkPlayer(M.initPlayer(wsid, this.dataStore.getAll(), GM ? "GM" : "player"));
+
     }
 
-    addPlayer(initPlayer = null) {
+    checkPlayer( initPlayer ) {
+        if (!initPlayer) return null;
 
-        let player = null;
-        let payload = initPlayer.payload;
+        let player = this.players.get(initPlayer.payload.id);
 
-        if (!this.players.get(payload.id)) {
-            player = new Player(this.bus, payload.sheet, payload.id, payload.role);
-            this.players.set(player.id, player);
-            if (this.playerLocalID === player.id) {
-                player.local = true;
-                player.dataStore = this.dataStore;
-                player.dom = new Sheet(this.bus, player);
-            }
+        if (!player) player = this.createPlayer(initPlayer.payload);
+
+        player.updateData(initPlayer.payload.sheet);
+    }
+
+    createPlayer( payload ) {
+        const player = new Player(this.bus, payload.sheet, payload.id, payload.role);
+        this.players.set(player.id, player);
+
+        if (this.playerLocalID === player.id) {
+            player.local = true;
+            player.dataStore = this.dataStore;
+            this.playerLocal = player;
         }
 
-        player = this.players.get(payload.id);
-        player.updateData(payload.sheet);
+        player.dom = this.SheetManager.checkSheet(player);
 
         return player;
     }
@@ -59,10 +67,6 @@ export class PlayerManager {
     getAll() {
         return [...this.players.values()];
     }
-
-    /*getPlayers() {
-        return this.getAll().find(p => p.role === "player");
-    }*/
 
 }
 
@@ -159,7 +163,7 @@ class Player {
 
         sheet.notes = sheet_?.notes ?? "";
 
-        this.dom?.loadDatas();
+        this.dom.loadDatas();
         this.bus.emit("player:updated", this);
     }
 
@@ -174,17 +178,15 @@ class Player {
         if(minisheet.contacts) this.sheet.contacts = minisheet.contacts;
 
         this.dataStore?.setAll(this.sheet);
-        this.bus.emit("player:partialupdate", { id: this.id, player: this, minisheet });
+
+        this.dom.loadData(this.dom.itemEl, key, value);
+        this.bus.emit("player:partialupdate", { id: this.id, player: this, key, value, minisheet, role: this.role });
     }
 
     partialNetUpdate(playerData) {
-
-        if (playerData.key == undefined && playerData.minisheet == undefined) return;
-
-        let minisheet = playerData.minisheet ?? playerData.key.split("_").reverse().reduce((acc, part) => ({ [part]: acc }), playerData.value);
-        this.sheet = mergeDeep(this.sheet, minisheet);
-
-        this.bus.emit("player:partialupdate", { id: this.id, player: this, minisheet });
+        this.sheet = mergeDeep(this.sheet, playerData.minisheet);
+        this.dom.loadData(this.dom.sheetEl, playerData.key, playerData.value);
+        this.dom.loadData(this.dom.itemEl, playerData.key, playerData.value);
     }
 
 }

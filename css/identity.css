@@ -33,3 +33,9 @@
         }
     }
 }
+
+.GM .GM .zone-identity {
+  display: block;
+  width: 100%;
+  margin: 1rem 0 0;
+}

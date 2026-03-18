@@ -1,38 +1,36 @@
 export class DicePool {
 
-    constructor(bus, playerManager) {
+    constructor(bus, sheet) {
 
         this.bus = bus;
-        this.playerManager = playerManager;
+        this.sheet = sheet;
         this.container = document.querySelector(`.dice-box`);
-        const localEl = document.querySelector(`#sheet-${playerManager.playerLocalID}`);
-        this.atoutCounter = localEl.querySelector(`.icon-box.atoutpenalite .atoutCounter`);
-        this.skillCounter = localEl.querySelector(`.icon-box.atoutpenalite .skillCounter`);
+        this.atoutCounter = sheet.sheetEl.querySelector(`.icon-box.atoutpenalite .atoutCounter`);
+        this.skillCounter = sheet.sheetEl.querySelector(`.icon-box.atoutpenalite .skillCounter`);
         this.dice = [];
         this.atout = 0;
         this.skills = 0;
 
         this.bus.on("skills:changed", nb => this.updateSkills(nb));
 
-        localEl.querySelector(`.comp_atout`)?.addEventListener("click", e => {
+        sheet.sheetEl.querySelector(`.comp_atout`)?.addEventListener("click", e => {
             this.atout++;
             this.updateAtoutLabel();
         });
 
-        localEl.querySelector(`.comp_penalite`)?.addEventListener("click", e => {
+        sheet.sheetEl.querySelector(`.comp_penalite`)?.addEventListener("click", e => {
             this.atout--;
             this.updateAtoutLabel();
         });
 
-        localEl.querySelector(`.icon-box.vigueur span`)?.addEventListener("click", e => {
+        sheet.sheetEl.querySelector(`.icon-box.vigueur span`)?.addEventListener("click", e => {
             this.clear();
             this.add({ className: "dice10", maxValue: 10, color: "vigueur" });
 
-            const sheet = this.playerManager.getLocal().sheet;
-            this.bus.emit("dicepool:roll", { id: this.playerManager.playerLocalID, label: "Vigueur", dice: this.dice, result: this.highest().value });
+            this.bus.emit("dicepool:roll", { id: sheet.player.id, label: "Vigueur", dice: this.dice, result: this.highest().value });
         });
 
-        localEl.querySelectorAll(`.stats-list span`)?.forEach(label => {
+        sheet.sheetEl.querySelectorAll(`.stats-list span`)?.forEach(label => {
             label.addEventListener("click", () => {
                 const input = label.parentNode.querySelector("input");
                 this.roll(label.innerText, input.value);
@@ -64,8 +62,7 @@ export class DicePool {
 
         this.sortAtout();
 
-        const sheet = this.playerManager.getLocal().sheet;
-        this.bus.emit("dicepool:roll", { id: this.playerManager.playerLocalID, label: stats, dice: this.dice, result: this.resultAtout().value });
+        this.bus.emit("dicepool:roll", { id: this.sheet.player.id, label: stats, dice: this.dice, result: this.resultAtout().value });
 
         this.atout = 0;
         this.updateAtoutLabel();
@@ -87,20 +84,20 @@ export class DicePool {
 
     add(options) {
         const dice = new Dice(this.container, options);
-        this.dice.push(dice);
+        this.dice.push({...options, dice, value:dice.value});
         return dice;
     }
 
     clear() {
-        this.dice.forEach(d => d.remove());
+        this.dice.forEach(d => d.dice.remove());
         this.dice = [];
     }
 
-    values() { return this.dice.map(d => d.value); }
+    values() { return this.dice.map(d => d.dice.value); }
 
-    highest() { return this.dice?.reduce((a, b) => a.value > b.value ? a : b); }
+    highest() { return this.dice?.reduce((a, b) => a.dice.value > b.dice.value ? a : b); }
 
-    lowest() { return this.dice?.reduce((a, b) => a.value < b.value ? a : b); }
+    lowest() { return this.dice?.reduce((a, b) => a.dice.value < b.dice.value ? a : b); }
 
     resultAtout() {
         if (this.atout < 0) return this.lowest();
@@ -109,14 +106,14 @@ export class DicePool {
 
     sortDesc() {
         this.dice
-            .sort((a, b) => b.value - a.value)
-            .forEach(d => this.container.appendChild(d.diceEl));
+            .sort((a, b) => b.dice.value - a.dice.value)
+            .forEach(d => this.container.appendChild(d.dice.diceEl));
     }
 
     sortAsc() {
         this.dice
-            .sort((a, b) => a.value - b.value)
-            .forEach(d => this.container.appendChild(d.diceEl));
+            .sort((a, b) => a.dice.value - b.dice.value)
+            .forEach(d => this.container.appendChild(d.dice.diceEl));
     }
 
     sortAtout() {

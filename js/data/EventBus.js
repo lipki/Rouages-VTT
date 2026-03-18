@@ -10,7 +10,10 @@ export class EventBus {
 
     emit(event, data = null) {
         console.log("emit", event, data);
-        (this.events[event] || []).forEach(cb => cb(data));
+        (this.events[event] || []).forEach(cb => {
+            console.log(event, "lsten by", cb);
+            cb(data)
+        });
     }
 
 }
